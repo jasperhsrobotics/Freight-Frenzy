@@ -1,12 +1,11 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.util.Range;
-import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
-@TeleOp
+@TeleOp(name = "TeleOp")
 public class MainTeleOp extends OpMode {
     private ElapsedTime runtime = new ElapsedTime();
 
@@ -15,6 +14,8 @@ public class MainTeleOp extends OpMode {
     private DcMotor frontRight = null;
     private DcMotor backLeft = null;
     private DcMotor backRight = null;
+    private DcMotor carouselSpinner = null;
+    private boolean carousel = false;
 
 
     /*
@@ -31,13 +32,16 @@ public class MainTeleOp extends OpMode {
         frontRight = hardwareMap.get(DcMotor.class, "frdrive");
         backLeft = hardwareMap.get(DcMotor.class, "bldrive");
         backRight = hardwareMap.get(DcMotor.class, "brdrive");
+        carouselSpinner = hardwareMap.get(DcMotor.class, "carousel");
 
         // 2 of the 4 motors are always reversed
-        // TODO: check this when chains are attached
         frontLeft.setDirection(DcMotor.Direction.REVERSE);
         frontRight.setDirection(DcMotor.Direction.FORWARD);
         backLeft.setDirection(DcMotor.Direction.REVERSE);
         backRight.setDirection(DcMotor.Direction.FORWARD);
+
+        // TODO: check this
+        carouselSpinner.setDirection(DcMotor.Direction.FORWARD);
 
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialized");
@@ -45,6 +49,15 @@ public class MainTeleOp extends OpMode {
 
     @Override
     public void loop() {
+
+        // Use the A key to toggle carousel attachment
+        if (gamepad1.a && !carousel) {
+            carousel = true;
+            carouselSpinner.setPower(1);
+        } else if (gamepad1.a && carousel) {
+            carousel = false;
+            carouselSpinner.setPower(0);
+        }
 
         double y = -gamepad1.left_stick_y; // Remember, this is reversed!
         double x = gamepad1.left_stick_x * 1.1; // Counteract imperfect strafing
@@ -68,5 +81,6 @@ public class MainTeleOp extends OpMode {
         // Show the elapsed game time and wheel power.
         telemetry.addData("Status", "Run Time: " + runtime.toString());
         telemetry.addData("Motors", "front left (%.2f), front right (%.2f), back left (%.2f), back right (%.2f)", frontLeftPower, frontRightPower, backLeftPower, backRightPower);
+        telemetry.addData("Carousel", carousel);
     }
 }

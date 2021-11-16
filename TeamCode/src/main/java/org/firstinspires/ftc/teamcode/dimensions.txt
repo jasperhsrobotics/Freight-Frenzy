@@ -1,0 +1,11 @@
+Dimensions are in Inches
+
+Carousel:
+    diameter: 15
+    Height: 13
+
+Shipping hub (Team):
+    Height: 18.5
+
+
+Shipping hub (Shared):

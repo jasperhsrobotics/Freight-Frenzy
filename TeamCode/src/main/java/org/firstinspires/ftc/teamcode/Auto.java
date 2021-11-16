@@ -1,9 +1,12 @@
 package org.firstinspires.ftc.teamcode;
 
+import android.graphics.Color;
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 
 import java.util.Arrays;
 import java.util.List;
@@ -18,6 +21,7 @@ public class Auto extends LinearOpMode {
     private static DcMotor backLeft = null;
     private static DcMotor backRight = null;
     private static DcMotor carouselMotor = null;
+    private static ColorSensor color = null;
 
     // measure
     private static final double COUNTS_PER_REV = 1120.0;
@@ -39,6 +43,7 @@ public class Auto extends LinearOpMode {
         backLeft = hardwareMap.get(DcMotor.class, "bldrive");
         backRight = hardwareMap.get(DcMotor.class, "brdrive");
         carouselMotor = hardwareMap.get(DcMotor.class, "carousel");
+//        color = hardwareMap.get(ColorSensor.class, "colorSensor");
         frontLeft.setDirection(DcMotor.Direction.REVERSE);
         frontRight.setDirection(DcMotor.Direction.FORWARD);
         backLeft.setDirection(DcMotor.Direction.REVERSE);
@@ -52,6 +57,29 @@ public class Auto extends LinearOpMode {
          * current plan: carousel -> turn around -> warehouse
          * total points: 20
          */
+
+        /*
+        * 39" Left
+        * Spin Carousel (Time is TBD)
+        * 90 deg counter clockwise
+        * 108" Reverse (Because currently barriers can only be crossed from behind)
+        * */
+
+        /*
+        frontLeft.setPower(-0.5);
+        backLeft.setPower(0.5);
+        backRight.setPower(-0.5);
+        frontRight.setPower(0.5);
+        sleep(200);
+        */
+
+        move(Direction.LEFT, 200, true);
+        move(Direction.COUNTERCLOCKWISE, 90);
+        spinCarousel(5000); // Check Later
+        move(Direction.COUNTERCLOCKWISE, 90);
+        move(Direction.BACKWARD, 108);
+
+        /*
         move(Direction.LEFT, 15);
         move(Direction.COUNTERCLOCKWISE, 20);
         spinCarousel(5000);
@@ -61,6 +89,7 @@ public class Auto extends LinearOpMode {
         move(Direction.COUNTERCLOCKWISE, 90);
 
         move(Direction.BACKWARD, 50, 0.7);
+         */
     }
 
     /**
@@ -125,12 +154,12 @@ public class Auto extends LinearOpMode {
         if (nSpeed == 0) {
             nSpeed = SPEED;
         }
-        frontLeft.setPower(nSpeed);
-        backLeft.setPower(nSpeed);
-        backRight.setPower(nSpeed);
-        frontRight.setPower(nSpeed);
+        frontLeft.setPower(nSpeed * motorSpeeds.get(0));
+        backLeft.setPower(nSpeed * motorSpeeds.get(1));
+        backRight.setPower(nSpeed * motorSpeeds.get(2));
+        frontRight.setPower(nSpeed * motorSpeeds.get(3));
 
-        while (opModeIsActive() && (runtime.seconds() < TIMEOUT && frontLeft.isBusy() && backLeft.isBusy() && backRight.isBusy() && frontRight.isBusy())) {
+        while (opModeIsActive() && (runtime.seconds() < TIMEOUT) && frontLeft.isBusy() && backLeft.isBusy() && backRight.isBusy() && frontRight.isBusy()) {
             if (print) {
                 telemetry.addData("Direction",direction.toString());
                 telemetry.addData("Distance",Double.toString(distance));
@@ -142,7 +171,6 @@ public class Auto extends LinearOpMode {
         backLeft.setPower(0);
         backRight.setPower(0);
         frontRight.setPower(0);
-
     }
 
     /**

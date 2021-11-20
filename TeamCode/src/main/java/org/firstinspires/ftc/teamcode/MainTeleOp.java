@@ -55,26 +55,26 @@ public class MainTeleOp extends OpMode {
     public void loop() {
 
         // Use the A key to toggle carousel attachment
-        if (gamepad2.a && !carousel) {
+        if (gamepad1.a && !carousel) {
             carousel = true;
             carouselSpinner.setPower(1);
-        } else if (gamepad2.a && carousel) {
+        } else if (gamepad1.a && carousel) {
             carousel = false;
             carouselSpinner.setPower(0);
         }
 
         // Use dpad up and down to control arm
-        if(gamepad2.dpad_up) {
+        if(gamepad1.dpad_up) {
             arm.setPower(0.25);
-        } else if(gamepad2.dpad_down) {
+        } else if(gamepad1.dpad_down) {
             arm.setPower(-0.25);
         } else {
             arm.setPower(0.05);
         }
 
-        if(gamepad2.dpad_left) {
+        if(gamepad1.right_trigger > 0) {
             claw.setPosition(0.2);
-        } else if(gamepad2.dpad_right) {
+        } else if(gamepad1.left_trigger > 0) {
             claw.setPosition(0.75);
         }
 

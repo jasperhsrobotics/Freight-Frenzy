@@ -5,6 +5,7 @@ import android.graphics.Color;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 
@@ -30,7 +31,7 @@ public class Auto extends LinearOpMode {
     private static final double SIDE_COUNTS_PER_INCH = FORWARD_COUNTS_PER_INCH * 1.5;
     private static final double PIVOT_COUNTS_PER_DEGREE = FORWARD_COUNTS_PER_INCH / 4.5;
     private static final double SPEED = 0.5;
-    private static final double CAROUSEL_SPEED = 0.5;
+    private static final double CAROUSEL_SPEED = 1;
     private static final double TIMEOUT = 5; // seconds, used in printing in move()
 
     /**
@@ -53,31 +54,38 @@ public class Auto extends LinearOpMode {
         waitForStart();
         start();
 
+        frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
         /*
          * current plan: carousel -> turn around -> warehouse
          * total points: 20
          */
 
         /*
-        * 39" Left
-        * Spin Carousel (Time is TBD)
-        * 90 deg counter clockwise
-        * 108" Reverse (Because currently barriers can only be crossed from behind)
-        * */
+         * 39" Left
+         * Spin Carousel (Time is TBD)
+         * 90 deg counter clockwise
+         * 108" Reverse (Because currently barriers can only be crossed from behind)
+         * */
 
-        /*
-        frontLeft.setPower(-0.5);
-        backLeft.setPower(0.5);
-        backRight.setPower(-0.5);
-        frontRight.setPower(0.5);
-        sleep(200);
-        */
 
-        move(Direction.LEFT, 200, true);
-        move(Direction.COUNTERCLOCKWISE, 90);
-        spinCarousel(5000); // Check Later
-        move(Direction.COUNTERCLOCKWISE, 90);
-        move(Direction.BACKWARD, 108);
+//        frontLeft.setPower(0);
+//        backLeft.setPower(0);
+//        backRight.setPower(0);
+//        frontRight.setPower(0);
+
+//        move(Direction.FORWARD, 5, true);
+
+//         move(Direction.LEFT, 1, true);
+//         move(Direction.COUNTERCLOCKWISE, 90);
+//         spinCarousel(5000); // Check Later
+//         move(Direction.COUNTERCLOCKWISE, 90);
+//         move(Direction.RIGHT, 108);
+
+        moveLeft(3000);
 
         /*
         move(Direction.LEFT, 15);
@@ -102,6 +110,98 @@ public class Auto extends LinearOpMode {
         carouselMotor.setPower(0);
     }
 
+    //Movement Methods
+
+    public void moveForward(int ticks){
+        frontLeft.setTargetPosition(ticks);
+        frontLeft.setPower(1);
+        frontRight.setTargetPosition(ticks);
+        frontRight.setPower(1);
+        backLeft.setTargetPosition(ticks);
+        backLeft.setPower(1);
+        backRight.setTargetPosition(ticks);
+        backRight.setPower(1);
+        frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    }
+
+    public void moveBack(int ticks){
+        frontLeft.setTargetPosition(ticks);
+        frontLeft.setPower(-1);
+        frontRight.setTargetPosition(ticks);
+        frontRight.setPower(-1);
+        backLeft.setTargetPosition(ticks);
+        backLeft.setPower(-1);
+        backRight.setTargetPosition(ticks);
+        backRight.setPower(-1);
+        frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    }
+
+    public void moveLeft(int ticks){
+        frontLeft.setTargetPosition(ticks);
+        frontLeft.setPower(-1);
+        frontRight.setTargetPosition(ticks);
+        frontRight.setPower(1);
+        backLeft.setTargetPosition(ticks);
+        backLeft.setPower(1);
+        backRight.setTargetPosition(ticks);
+        backRight.setPower(-1);
+        frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    }
+
+    public void moveRight(int ticks){
+        frontLeft.setTargetPosition(ticks);
+        frontLeft.setPower(1);
+        frontRight.setTargetPosition(ticks);
+        frontRight.setPower(-1);
+        backLeft.setTargetPosition(ticks);
+        backLeft.setPower(-1);
+        backRight.setTargetPosition(ticks);
+        backRight.setPower(1);
+        frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    }
+
+    public void pivotLeft(int ticks){
+        frontLeft.setTargetPosition(ticks);
+        frontLeft.setPower(1);
+        frontRight.setTargetPosition(ticks);
+        frontRight.setPower(-1);
+        backLeft.setTargetPosition(ticks);
+        backLeft.setPower(1);
+        backRight.setTargetPosition(ticks);
+        backRight.setPower(-1);
+        frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    }
+
+    public void pivotRight(int ticks){
+        frontLeft.setTargetPosition(ticks);
+        frontLeft.setPower(-1);
+        frontRight.setTargetPosition(ticks);
+        frontRight.setPower(1);
+        backLeft.setTargetPosition(ticks);
+        backLeft.setPower(-1);
+        backRight.setTargetPosition(ticks);
+        backRight.setPower(1);
+        frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    }
+
     /**
      * Moves the robot using encoder values and omnidirectional pivoting
      * @param direction - the direction to move {FORWARD, BACKWARD, LEFT, RIGHT, CLOCKWISE, COUNTERCLOCKWISE}
@@ -115,11 +215,11 @@ public class Auto extends LinearOpMode {
 
         switch (direction) {
             case FORWARD:
-                motorSpeeds = Arrays.asList(1,1,1,1);
+                motorSpeeds = Arrays.asList(0,1,1,0);
                 driveMult = FORWARD_COUNTS_PER_INCH;
                 break;
             case BACKWARD:
-                motorSpeeds = Arrays.asList(-1,-1,-1,-1);
+                motorSpeeds = Arrays.asList(0,-1,-1,0);
                 driveMult = FORWARD_COUNTS_PER_INCH;
                 break;
             case LEFT:
@@ -159,11 +259,20 @@ public class Auto extends LinearOpMode {
         backRight.setPower(nSpeed * motorSpeeds.get(2));
         frontRight.setPower(nSpeed * motorSpeeds.get(3));
 
-        while (opModeIsActive() && (runtime.seconds() < TIMEOUT) && frontLeft.isBusy() && backLeft.isBusy() && backRight.isBusy() && frontRight.isBusy()) {
+        frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        while (opModeIsActive() && (frontLeft.isBusy())
+                || (frontRight.isBusy())
+                || (backLeft.isBusy())
+                || (backRight.isBusy())) {
             if (print) {
                 telemetry.addData("Direction",direction.toString());
                 telemetry.addData("Distance",Double.toString(distance));
                 telemetry.update();
+                idle();
             }
         }
 
@@ -171,6 +280,12 @@ public class Auto extends LinearOpMode {
         backLeft.setPower(0);
         backRight.setPower(0);
         frontRight.setPower(0);
+
+        frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
     }
 
     /**
@@ -183,7 +298,7 @@ public class Auto extends LinearOpMode {
 
     /**
      * For a specific speed other than the default (see SPEED)
-    */
+     */
     public void move(Direction direction, double distance, double nSpeed) {
         move(direction, distance, true, nSpeed);
     }

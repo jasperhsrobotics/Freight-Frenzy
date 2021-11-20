@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 @TeleOp(name = "TeleOp")
@@ -15,6 +16,8 @@ public class MainTeleOp extends OpMode {
     private DcMotor backLeft = null;
     private DcMotor backRight = null;
     private DcMotor carouselSpinner = null;
+    private DcMotor arm = null;
+    private Servo claw = null;
     private boolean carousel = false;
 
 
@@ -33,7 +36,8 @@ public class MainTeleOp extends OpMode {
         backLeft = hardwareMap.get(DcMotor.class, "bldrive");
         backRight = hardwareMap.get(DcMotor.class, "brdrive");
         carouselSpinner = hardwareMap.get(DcMotor.class, "carousel");
-
+        arm = hardwareMap.get(DcMotor.class, "arm");
+        claw = hardwareMap.get(Servo.class, "claw");
         // 2 of the 4 motors are always reversed
         frontLeft.setDirection(DcMotor.Direction.REVERSE);
         frontRight.setDirection(DcMotor.Direction.FORWARD);
@@ -41,7 +45,7 @@ public class MainTeleOp extends OpMode {
         backRight.setDirection(DcMotor.Direction.FORWARD);
 
         // TODO: check this
-        carouselSpinner.setDirection(DcMotor.Direction.FORWARD);
+        carouselSpinner.setDirection(DcMotor.Direction.REVERSE);
 
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialized");
@@ -51,12 +55,27 @@ public class MainTeleOp extends OpMode {
     public void loop() {
 
         // Use the A key to toggle carousel attachment
-        if (gamepad1.a && !carousel) {
+        if (gamepad2.a && !carousel) {
             carousel = true;
             carouselSpinner.setPower(1);
-        } else if (gamepad1.a && carousel) {
+        } else if (gamepad2.a && carousel) {
             carousel = false;
             carouselSpinner.setPower(0);
+        }
+
+        // Use dpad up and down to control arm
+        if(gamepad2.dpad_up) {
+            arm.setPower(0.25);
+        } else if(gamepad2.dpad_down) {
+            arm.setPower(-0.25);
+        } else {
+            arm.setPower(0.05);
+        }
+
+        if(gamepad2.dpad_left) {
+            claw.setPosition(0.2);
+        } else if(gamepad2.dpad_right) {
+            claw.setPosition(0.75);
         }
 
         double y = -gamepad1.left_stick_y; // Remember, this is reversed!
@@ -82,5 +101,7 @@ public class MainTeleOp extends OpMode {
         telemetry.addData("Status", "Run Time: " + runtime.toString());
         telemetry.addData("Motors", "front left (%.2f), front right (%.2f), back left (%.2f), back right (%.2f)", frontLeftPower, frontRightPower, backLeftPower, backRightPower);
         telemetry.addData("Carousel", carousel);
+        telemetry.addData("Arm", arm.getPowerFloat());
+        telemetry.addData("Claw", claw.getPosition());
     }
 }

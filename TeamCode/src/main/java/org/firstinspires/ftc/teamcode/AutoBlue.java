@@ -7,9 +7,9 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 
-@Autonomous(name = "Auto3")
+@Autonomous(name = "Auto Blue")
 @Disabled
-public class Auto3 extends LinearOpMode {
+public class AutoBlue extends LinearOpMode {
     private final ElapsedTime runtime = new ElapsedTime();
 
     // Initializes drive motors to null
@@ -46,8 +46,12 @@ public class Auto3 extends LinearOpMode {
         frontRight.setDirection(DcMotor.Direction.FORWARD);
         backLeft.setDirection(DcMotor.Direction.REVERSE);
         backRight.setDirection(DcMotor.Direction.FORWARD);
-        carouselMotor.setDirection(DcMotor.Direction.REVERSE);
+        carouselMotor.setDirection(DcMotor.Direction.FORWARD);
 
+        frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
         wheels[0] = frontLeft;
         wheels[1] = frontRight;
@@ -65,17 +69,17 @@ public class Auto3 extends LinearOpMode {
 
         waitForStart();
 
-        moveForward(5, 1);
-        pivotRight(1100, 1);
-        moveForward(30, 1);
+        moveForward(4.5, 1);
+        pivotRight(1200, 1);
+        moveBackward(30, 1);
         carouselMotor.setPower(1);
         sleep(3000);
         carouselMotor.setPower(0);
-        moveBackward(108, 1);
+        moveForward(108, 1);
 
 
 
-        /*/
+        /*
         moveForward(17,1);
         sleep(6500);
         */
@@ -132,6 +136,44 @@ public class Auto3 extends LinearOpMode {
             wheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
     }
+
+    public void pivotLeft(int ticks, double speed) {
+        //int target = (int)(Math.round(inches * COUNTS_PER_INCH));
+        int target = ticks;
+
+        wheels[0].setTargetPosition(wheels[0].getCurrentPosition() + target);
+        wheels[1].setTargetPosition(wheels[1].getCurrentPosition() - target);
+        wheels[2].setTargetPosition(wheels[2].getCurrentPosition() + target);
+        wheels[3].setTargetPosition(wheels[3].getCurrentPosition() - target);
+
+        for (int i = 0; i < 4; i++) {
+
+            // Tells the motor to drive until they reach the target position
+            wheels[i].setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        }
+//        runtime.reset();
+
+        frontLeft.setPower(-speed);
+        backLeft.setPower(-speed);
+        backRight.setPower(-speed);
+        frontRight.setPower(-speed);
+
+        while (opModeIsActive() && frontLeft.isBusy() && backLeft.isBusy() && backRight.isBusy() && frontRight.isBusy()) {
+//            telemetry.addData("Path1",  "Running to %7d :%7d :%7d :%7d", newWheelTarget[0],  newWheelTarget[1], newWheelTarget[2], newWheelTarget[3]);
+            telemetry.addData("Path2",  "Running at %7d :%7d :%7d :%7d", frontLeft.getCurrentPosition(), frontRight.getCurrentPosition(), backRight.getCurrentPosition(), backLeft.getCurrentPosition());
+            telemetry.update();
+        }
+
+        for (DcMotor wheel : wheels){
+            // Stops motors after motors have reached target position
+            wheel.setPower(0);
+
+            // Resets encoders
+            wheel.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            wheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        }
+    }
+
 
     public void moveForward(double inches, double speed) {
         int target = (int)(Math.round(inches * COUNTS_PER_INCH));

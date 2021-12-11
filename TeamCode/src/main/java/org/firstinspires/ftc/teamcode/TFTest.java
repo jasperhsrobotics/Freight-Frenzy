@@ -84,7 +84,6 @@ public class TFTest extends LinearOpMode {
      */
     private static final String VUFORIA_KEY =
             "AWyiyiL/////AAABmco6zVsm5EuKslCcAw8XFIQWhtVJtkzh6YzxTARrUTgsmAKOz/ZGBPcEqKvIFiXWAfXnxY40ts90P+OiBZOvNYqCKClxNP6QfP0hUZaVTB4kqg1w5hzX81vowLmRfhjmAT25EuL382Sz1buNbVgywcs6bGe205kckcQ/c7iIJ3jyT9+P7D0QyYImtkSxXxs2hFJ+x18ukvnVTWjrqxZQf6UYBmz6GoW/qaE4bxGHiWESkfS3fUMCtY104EdbEJk3KxRG0Os1KFcW4DItuznmsLwv+2vE3a1j+YKbs4Aqx3Sv/743uND8YOkbYXpwgh28xEWrDHxvStIS2ziR8grrXJlNFE9Xm/STJ8Xnz9IYR7JM";
-
     /**
      * {@link #vuforia} is the variable we will use to store our instance of the Vuforia
      * localization engine.

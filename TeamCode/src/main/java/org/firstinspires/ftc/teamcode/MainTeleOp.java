@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -19,13 +20,17 @@ public class MainTeleOp extends OpMode {
     private DcMotor arm = null;
     private Servo claw = null;
     private boolean carousel = false;
-
+    private boolean carouselDir = false;
+    private boolean braking = false;
+    private double speed;
+    private boolean spedUp;
 
     /*
      * Code to run ONCE when the driver hits INIT
      */
     @Override
     public void init() {
+        speed = 0.5;
         telemetry.addData("Status", "Initialized");
 
         // Initialize the hardware variables. Note that the strings used here as parameters
@@ -35,17 +40,20 @@ public class MainTeleOp extends OpMode {
         frontRight = hardwareMap.get(DcMotor.class, "frdrive");
         backLeft = hardwareMap.get(DcMotor.class, "bldrive");
         backRight = hardwareMap.get(DcMotor.class, "brdrive");
-        carouselSpinner = hardwareMap.get(DcMotor.class, "carousel");
-        arm = hardwareMap.get(DcMotor.class, "arm");
-        claw = hardwareMap.get(Servo.class, "claw");
+
+        // COMMENT OUT LATER
+        carouselSpinner = hardwareMap.get(DcMotor.class, "carouselL");
+        //arm = hardwareMap.get(DcMotor.class, "arm");
+        //claw = hardwareMap.get(Servo.class, "claw");
         // 2 of the 4 motors are always reversed
         frontLeft.setDirection(DcMotor.Direction.REVERSE);
         frontRight.setDirection(DcMotor.Direction.FORWARD);
         backLeft.setDirection(DcMotor.Direction.REVERSE);
         backRight.setDirection(DcMotor.Direction.FORWARD);
 
+        // COMMENT OUT LATER
         // TODO: check this
-        carouselSpinner.setDirection(DcMotor.Direction.REVERSE);
+        //carouselSpinner.setDirection(DcMotor.Direction.REVERSE);
 
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialized");
@@ -53,6 +61,7 @@ public class MainTeleOp extends OpMode {
 
     @Override
     public void loop() {
+        // COMMENT OUT LATER
 
         // Use the A key to toggle carousel attachment
         if (gamepad1.a && !carousel) {
@@ -62,9 +71,9 @@ public class MainTeleOp extends OpMode {
             carousel = false;
             carouselSpinner.setPower(0);
         }
-
+        /*
         // Use dpad up and down to control arm
-        if(gamepad1.dpad_up) {
+21q11q1122222         if(gamepad1.dpad_up) {
             arm.setPower(0.25);
         } else if(gamepad1.dpad_down) {
             arm.setPower(-0.25);
@@ -72,10 +81,19 @@ public class MainTeleOp extends OpMode {
             arm.setPower(0.05);
         }
 
-        if(gamepad1.right_trigger > 0) {
+        if(gamepad1.left_bumper) {
             claw.setPosition(0.2);
-        } else if(gamepad1.left_trigger > 0) {
+        } else if(gamepad1.right_bumper) {
             claw.setPosition(0.75);
+        }
+        */
+
+        if (gamepad1.b && !spedUp) {
+            spedUp = true;
+            speed = 1;
+        } else if (gamepad1.b && spedUp) {
+            spedUp = false;
+            speed = 0.5;
         }
 
         double y = -gamepad1.left_stick_y; // Remember, this is reversed!
@@ -92,16 +110,17 @@ public class MainTeleOp extends OpMode {
         double backRightPower = (y + x - rx) / denominator;
 
         // Sets power
-        frontLeft.setPower(frontLeftPower);
-        backLeft.setPower(backLeftPower);
-        frontRight.setPower(frontRightPower);
-        backRight.setPower(backRightPower);
+        frontLeft.setPower(frontLeftPower*speed);
+        backLeft.setPower(backLeftPower*speed);
+        frontRight.setPower(frontRightPower*speed);
+        backRight.setPower(backRightPower*speed);
 
         // Show the elapsed game time and wheel power.
         telemetry.addData("Status", "Run Time: " + runtime.toString());
         telemetry.addData("Motors", "front left (%.2f), front right (%.2f), back left (%.2f), back right (%.2f)", frontLeftPower, frontRightPower, backLeftPower, backRightPower);
-        telemetry.addData("Carousel", carousel);
-        telemetry.addData("Arm", arm.getPowerFloat());
-        telemetry.addData("Claw", claw.getPosition());
+        telemetry.addData("Speed Modifier (%.1f)", speed);
+        //telemetry.addData("Carousel", carousel);
+        //telemetry.addData("Arm", arm.getPowerFloat());
+        //telemetry.addData("Claw", claw.getPosition());
     }
 }

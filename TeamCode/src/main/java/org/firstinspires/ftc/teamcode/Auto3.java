@@ -8,7 +8,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 
 @Autonomous(name = "Auto3")
-@Disabled
 public class Auto3 extends LinearOpMode {
     private final ElapsedTime runtime = new ElapsedTime();
 
@@ -40,7 +39,7 @@ public class Auto3 extends LinearOpMode {
         frontRight = hardwareMap.get(DcMotor.class, "frdrive");
         backLeft = hardwareMap.get(DcMotor.class, "bldrive");
         backRight = hardwareMap.get(DcMotor.class, "brdrive");
-        carouselMotor = hardwareMap.get(DcMotor.class, "carousel");
+        carouselMotor = hardwareMap.get(DcMotor.class, "carouselL");
 
         frontLeft.setDirection(DcMotor.Direction.REVERSE);
         frontRight.setDirection(DcMotor.Direction.FORWARD);
@@ -65,14 +64,20 @@ public class Auto3 extends LinearOpMode {
 
         waitForStart();
 
-        moveForward(5, 1);
-        pivotRight(1100, 1);
-        moveForward(30, 1);
+        moveForward(50, 0.1);
+        strafeLeft(200, 0.7);
+        strafeLeft(100, 0.3);
+        moveBackward(4, 0.05);
+
         carouselMotor.setPower(1);
         sleep(3000);
         carouselMotor.setPower(0);
-        moveBackward(108, 1);
 
+        moveForward(30, 0.3);
+        strafeRight(150, 0.3);
+        pivotRight(150, 0.3);
+        strafeLeft(150, 0.1);
+        moveBackward(50, 0.1);
 
 
         /*/
@@ -133,8 +138,8 @@ public class Auto3 extends LinearOpMode {
         }
     }
 
-    public void moveForward(double inches, double speed) {
-        int target = (int)(Math.round(inches * COUNTS_PER_INCH));
+    public void moveForward(double ticks, double speed) {
+        int target = (int)(Math.round(ticks));
 
         for (int i = 0; i < 4; i++) {
             // Sets the target position for the motors
@@ -166,8 +171,8 @@ public class Auto3 extends LinearOpMode {
         }
     }
 
-    public void moveBackward(double inches, double speed) {
-        int target = (int)(Math.round(inches * COUNTS_PER_INCH));
+    public void moveBackward(double ticks, double speed) {
+        int target = (int)(Math.round(ticks));
 
         for (int i = 0; i < 4; i++) {
             // Sets the target position for the motors
@@ -199,8 +204,8 @@ public class Auto3 extends LinearOpMode {
         }
     }
 
-    public void strafeLeft(double inches, double speed) {
-        int target = (int)(Math.round(inches * COUNTS_PER_INCH));
+    public void strafeLeft(double ticks, double speed) {
+        int target = (int)(Math.round(ticks));
 
         wheels[0].setTargetPosition(wheels[0].getCurrentPosition() - target);
         wheels[1].setTargetPosition(wheels[1].getCurrentPosition() + target);
@@ -237,8 +242,8 @@ public class Auto3 extends LinearOpMode {
         }
     }
 
-    public void strafeRight(double inches, double speed) {
-        int target = (int)(Math.round(inches * COUNTS_PER_INCH));
+    public void strafeRight(double ticks, double speed) {
+        int target = (int)(Math.round(ticks));
 
         wheels[0].setTargetPosition(wheels[0].getCurrentPosition() + target);
         wheels[1].setTargetPosition(wheels[1].getCurrentPosition() - target);

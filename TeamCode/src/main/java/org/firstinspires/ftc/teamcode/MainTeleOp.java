@@ -18,6 +18,7 @@ public class MainTeleOp extends OpMode {
     private DcMotor backRight = null;
     private DcMotor carouselSpinner = null;
     private DcMotor arm = null;
+    private DcMotor intake = null;
     private Servo claw = null;
     private boolean carousel = false;
     private boolean carouselDir = false;
@@ -40,6 +41,7 @@ public class MainTeleOp extends OpMode {
         frontRight = hardwareMap.get(DcMotor.class, "frdrive");
         backLeft = hardwareMap.get(DcMotor.class, "bldrive");
         backRight = hardwareMap.get(DcMotor.class, "brdrive");
+        //intake = hardwareMap.get(DcMotor.class, "intake");
 
         // COMMENT OUT LATER
         carouselSpinner = hardwareMap.get(DcMotor.class, "carouselL");
@@ -50,10 +52,6 @@ public class MainTeleOp extends OpMode {
         frontRight.setDirection(DcMotor.Direction.FORWARD);
         backLeft.setDirection(DcMotor.Direction.REVERSE);
         backRight.setDirection(DcMotor.Direction.FORWARD);
-
-        // COMMENT OUT LATER
-        // TODO: check this
-        //carouselSpinner.setDirection(DcMotor.Direction.REVERSE);
 
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialized");
@@ -71,9 +69,13 @@ public class MainTeleOp extends OpMode {
             carousel = false;
             carouselSpinner.setPower(0);
         }
+
+        // just for testing, remove later
+        //intake.setPower(1);
+
         /*
         // Use dpad up and down to control arm
-21q11q1122222         if(gamepad1.dpad_up) {
+        if(gamepad1.dpad_up) {
             arm.setPower(0.25);
         } else if(gamepad1.dpad_down) {
             arm.setPower(-0.25);

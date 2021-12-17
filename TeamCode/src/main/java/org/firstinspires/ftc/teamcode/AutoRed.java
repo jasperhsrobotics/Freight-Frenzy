@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvCamera;
@@ -41,7 +42,7 @@ public class AutoRed extends LinearOpMode {
     static final double DRIVE_SPEED = 0.6;
     static final double TURN_SPEED = 0.5;
 
-    static String duckLocation = null;
+    static Location duckLocation = null;
 
     DcMotor[] wheels = new DcMotor[4];
 
@@ -96,30 +97,49 @@ public class AutoRed extends LinearOpMode {
 
         // opencv
 
-        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
-
-        webcam.setPipeline(new AutoRed.SamplePipeline());
-        webcam.setMillisecondsPermissionTimeout(2500);
-
-        webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
-        {
-            @Override
-            public void onOpened()
-            {
-                webcam.startStreaming(1280, 800, OpenCvCameraRotation.UPRIGHT);
-            }
-            @Override
-            public void onError(int errorCode)
-            {
-                telemetry.addData("Status", "bad bad so bad how could u mess up this catastrophically");
-            }
-        });
-
+//        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+//        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
+//
+//        webcam.setPipeline(new AutoRed.SamplePipeline());
+//        webcam.setMillisecondsPermissionTimeout(2500);
+//
+//        webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
+//        {
+//            @Override
+//            public void onOpened()
+//            {
+//                webcam.startStreaming(1280, 800, OpenCvCameraRotation.UPRIGHT);
+//            }
+//            @Override
+//            public void onError(int errorCode)
+//            {
+//                // lmao wtf is this error message
+//                telemetry.addData("Status", "bad bad so bad how could u mess up this catastrophically");
+//            }
+//        });
+//
+//
+//
         waitForStart();
-
-        // see if this works, if it works then use the duckLocation variable to put preloaded box on correct level
-        telemetry.addData("location", duckLocation);
+//
+//
+//        // IDK if java passes by reference or by value sooooo
+//        Location loc;
+//        if (duckLocation == Location.LEFT)
+//        {
+//            loc = Location.LEFT;
+//        }
+//        else if (duckLocation == Location.MIDDLE)
+//        {
+//            loc = Location.MIDDLE;
+//        }
+//        else
+//        {
+//            loc = Location.RIGHT;
+//        }
+//
+//        // see if this works, if it works then use the duckLocation variable to put preloaded box on correct level
+//        telemetry.addData("location", loc);
 
         // move code
         strafeLeft(900, 0.6);
@@ -129,6 +149,9 @@ public class AutoRed extends LinearOpMode {
         carouselLeft.setPower(0.6);
         sleep(4000);
         carouselLeft.setPower(0);
+
+//        if (loc == Location.LEFT)
+//            strafeRight(900, 0.6);
 
     }
 
@@ -147,11 +170,11 @@ public class AutoRed extends LinearOpMode {
         }
     }
 
-    public void strafeLeft(int milliseconds, double speed) {
-        frontLeft.setPower(speed * -1 * 0.8);
-        backLeft.setPower(speed);
-        backRight.setPower(speed * -1 * 0.8);
-        frontRight.setPower(speed * 0.8); // tried to offset the drift, didn't work imo but now i'm too scared to change it cuz it works anyways
+    public void strafeRight(int milliseconds, double speed) {
+        backLeft.setPower(speed * -1 * 0.8);
+        frontLeft.setPower(speed);
+        frontRight.setPower(speed * -1 * 0.8);
+        backRight.setPower(speed * 0.7); // got rid of the parabola-like movement :)
 
         sleep(milliseconds);
 
@@ -161,78 +184,93 @@ public class AutoRed extends LinearOpMode {
         }
     }
 
-    class SamplePipeline extends OpenCvPipeline {
-        boolean viewportPaused;
-        AutoRed.Location location;
-        @Override
-        public Mat processFrame(Mat input) {
-            Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGB2HSV);
-            Scalar lowHSV = new Scalar(23, 50, 70);
-            Scalar highHSV = new Scalar(32, 255, 255);
+    public void strafeLeft(int milliseconds, double speed) {
+        frontLeft.setPower(speed * -1 * 0.8);
+        backLeft.setPower(speed);
+        backRight.setPower(speed * -1 * 0.8);
+        frontRight.setPower(speed * 0.7); // got rid of the parabola-like movement :)
 
-            Core.inRange(mat, lowHSV, highHSV, mat);
+        sleep(milliseconds);
 
-            Mat left = mat.submat(LEFT_ROI);
-            Mat right = mat.submat(RIGHT_ROI);
-            Mat middle = mat.submat(MIDDLE_ROI);
-
-            double leftValue = Core.sumElems(left).val[0] / LEFT_ROI.area() / 255;
-            double rightValue = Core.sumElems(right).val[0] / RIGHT_ROI.area() / 255;
-            double middleValue = Core.sumElems(middle).val[0] / MIDDLE_ROI.area() / 255;
-
-            left.release();
-            right.release();
-            middle.release();
-
-            telemetry.addData("Left raw value", (int) Core.sumElems(left).val[0]);
-            telemetry.addData("Right raw value", (int) Core.sumElems(right).val[0]);
-            telemetry.addData("Left percentage", Math.round(leftValue * 100) + "%");
-            telemetry.addData("Right percentage", Math.round(rightValue * 100) + "%");
-            double rightPercentage = Math.round(rightValue * 100);
-            double leftPercentage = Math.round(leftValue * 100);
-            double middlePercentage = Math.round(middleValue * 100);
-            boolean stoneLeft = leftValue > PERCENT_COLOR_THRESHOLD;
-            boolean stoneRight = rightValue > PERCENT_COLOR_THRESHOLD;
-
-
-            if (rightPercentage > leftPercentage && rightPercentage > middlePercentage) {
-                location = Location.RIGHT;
-                duckLocation = "right";
-                telemetry.addData("Skystone Location", "right");
-            }
-            else if (leftPercentage > rightPercentage && leftPercentage > middlePercentage) {
-                location = Location.LEFT;
-                duckLocation = "left";
-                telemetry.addData("Skystone Location", "left");
-            }
-            else {
-                location = Location.MIDDLE;
-                duckLocation = "middle";
-                telemetry.addData("Skystone Location", "center");
-            }
-            telemetry.update();
-
-            Imgproc.cvtColor(mat, mat, Imgproc.COLOR_GRAY2RGB);
-
-            Scalar colorStone = new Scalar(255, 0, 0);
-            Scalar colorSkystone = new Scalar(0, 255, 0);
-
-            Imgproc.rectangle(mat, LEFT_ROI, location == Location.LEFT? colorSkystone:colorStone);
-            Imgproc.rectangle(mat, RIGHT_ROI, location == Location.RIGHT? colorSkystone:colorStone);
-            Imgproc.rectangle(mat, MIDDLE_ROI, location == Location.MIDDLE? colorSkystone:colorStone);
-            return mat;
-        }
-
-        @Override
-        public void onViewportTapped(){
-
-            viewportPaused = !viewportPaused;
-
-            if(viewportPaused){
-                webcam.pauseViewport();
-            } else {
-                webcam.resumeViewport();
-            }
+        for (DcMotor wheel : wheels) {
+            // Stops motors after motors have reached target position
+            wheel.setPower(0);
         }
     }
+
+//    class SamplePipeline extends OpenCvPipeline {
+//        boolean viewportPaused;
+//        AutoRed.Location location;
+//        @Override
+//        public Mat processFrame(Mat input) {
+//            Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGB2HSV);
+//            Scalar lowHSV = new Scalar(23, 50, 70);
+//            Scalar highHSV = new Scalar(32, 255, 255);
+//
+//            Core.inRange(mat, lowHSV, highHSV, mat);
+//
+//            Mat left = mat.submat(LEFT_ROI);
+//            Mat right = mat.submat(RIGHT_ROI);
+//            Mat middle = mat.submat(MIDDLE_ROI);
+//
+//            double leftValue = Core.sumElems(left).val[0] / LEFT_ROI.area() / 255;
+//            double rightValue = Core.sumElems(right).val[0] / RIGHT_ROI.area() / 255;
+//            double middleValue = Core.sumElems(middle).val[0] / MIDDLE_ROI.area() / 255;
+//
+//            left.release();
+//            right.release();
+//            middle.release();
+//
+//            telemetry.addData("Left raw value", (int) Core.sumElems(left).val[0]);
+//            telemetry.addData("Right raw value", (int) Core.sumElems(right).val[0]);
+//            telemetry.addData("Left percentage", Math.round(leftValue * 100) + "%");
+//            telemetry.addData("Right percentage", Math.round(rightValue * 100) + "%");
+//            double rightPercentage = Math.round(rightValue * 100);
+//            double leftPercentage = Math.round(leftValue * 100);
+//            double middlePercentage = Math.round(middleValue * 100);
+//            boolean stoneLeft = leftValue > PERCENT_COLOR_THRESHOLD;
+//            boolean stoneRight = rightValue > PERCENT_COLOR_THRESHOLD;
+//
+//
+//            if (rightPercentage > leftPercentage && rightPercentage > middlePercentage) {
+//                location = Location.RIGHT;
+//                duckLocation = Location.RIGHT;
+//                telemetry.addData("Skystone Location", "right");
+//            }
+//            else if (leftPercentage > rightPercentage && leftPercentage > middlePercentage) {
+//                location = Location.LEFT;
+//                duckLocation = Location.LEFT;
+//                telemetry.addData("Skystone Location", "left");
+//            }
+//            else {
+//                location = Location.MIDDLE;
+//                duckLocation = Location.MIDDLE;
+//                telemetry.addData("Skystone Location", "center");
+//            }
+//            telemetry.update();
+//
+//            Imgproc.cvtColor(mat, mat, Imgproc.COLOR_GRAY2RGB);
+//
+//            Scalar colorStone = new Scalar(255, 0, 0);
+//            Scalar colorSkystone = new Scalar(0, 255, 0);
+//
+//            Imgproc.rectangle(mat, LEFT_ROI, location == Location.LEFT? colorSkystone:colorStone);
+//            Imgproc.rectangle(mat, RIGHT_ROI, location == Location.RIGHT? colorSkystone:colorStone);
+//            Imgproc.rectangle(mat, MIDDLE_ROI, location == Location.MIDDLE? colorSkystone:colorStone);
+//            return mat;
+//        }
+
+//        @Override
+//        public void onViewportTapped(){
+//
+//            viewportPaused = !viewportPaused;
+//
+//            if(viewportPaused){
+//                webcam.pauseViewport();
+//            } else {
+//                webcam.resumeViewport();
+//            }
+//        }
+
+//     }
 }

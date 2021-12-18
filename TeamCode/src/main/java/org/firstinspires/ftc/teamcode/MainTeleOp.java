@@ -16,7 +16,8 @@ public class MainTeleOp extends OpMode {
     private DcMotor frontRight = null;
     private DcMotor backLeft = null;
     private DcMotor backRight = null;
-    private DcMotor carouselSpinner = null;
+    private DcMotor carouselRight = null;
+    private DcMotor carouselLeft = null;
     private DcMotor arm = null;
     private DcMotor intake = null;
     private Servo claw = null;
@@ -25,6 +26,7 @@ public class MainTeleOp extends OpMode {
     private boolean braking = false;
     private double speed;
     private boolean spedUp;
+    private boolean in = true;
 
     /*
      * Code to run ONCE when the driver hits INIT
@@ -41,10 +43,12 @@ public class MainTeleOp extends OpMode {
         frontRight = hardwareMap.get(DcMotor.class, "frdrive");
         backLeft = hardwareMap.get(DcMotor.class, "bldrive");
         backRight = hardwareMap.get(DcMotor.class, "brdrive");
-        //intake = hardwareMap.get(DcMotor.class, "intake");
+        intake = hardwareMap.get(DcMotor.class, "intake");
 
         // COMMENT OUT LATER
-        carouselSpinner = hardwareMap.get(DcMotor.class, "carouselL");
+        carouselLeft = hardwareMap.get(DcMotor.class, "carouselL");
+        carouselRight = hardwareMap.get(DcMotor.class, "carouselR");
+
         //arm = hardwareMap.get(DcMotor.class, "arm");
         //claw = hardwareMap.get(Servo.class, "claw");
         // 2 of the 4 motors are always reversed
@@ -52,6 +56,8 @@ public class MainTeleOp extends OpMode {
         frontRight.setDirection(DcMotor.Direction.FORWARD);
         backLeft.setDirection(DcMotor.Direction.REVERSE);
         backRight.setDirection(DcMotor.Direction.FORWARD);
+
+        intake.setDirection(DcMotor.Direction.REVERSE);
 
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialized");
@@ -61,17 +67,43 @@ public class MainTeleOp extends OpMode {
     public void loop() {
         // COMMENT OUT LATER
 
-        // Use the A key to toggle carousel attachment
-        if (gamepad1.a && !carousel) {
+        if (gamepad1.x && !carousel) {
             carousel = true;
-            carouselSpinner.setPower(1);
-        } else if (gamepad1.a && carousel) {
+            carouselRight.setPower(1);
+            carouselLeft.setPower(1);
+        } else if (gamepad1.x && carousel) {
             carousel = false;
-            carouselSpinner.setPower(0);
+            carouselLeft.setPower(0);
+            carouselRight.setPower(0);
         }
 
-        // just for testing, remove later
-        //intake.setPower(1);
+        if (gamepad1.b && !carousel) {
+            carousel = true;
+            carouselRight.setPower(-1);
+            carouselLeft.setPower(-1);
+        } else if (gamepad1.b && carousel) {
+            carousel = false;
+            carouselLeft.setPower(0);
+            carouselRight.setPower(0);
+        }
+
+        if (gamepad1.dpad_up) {
+            intake.setPower(-1);
+        } else if (gamepad1.dpad_down) {
+            intake.setPower(1);
+        } else {
+            intake.setPower(0);
+        }
+
+        if (gamepad1.y) {
+            intake.setPower(0);
+            carouselLeft.setPower(0);
+            carouselRight.setPower(0);
+            frontLeft.setPower(0);
+            frontRight.setPower(0);
+            backLeft.setPower(0);
+            backRight.setPower(0);
+        }
 
         /*
         // Use dpad up and down to control arm
@@ -90,10 +122,10 @@ public class MainTeleOp extends OpMode {
         }
         */
 
-        if (gamepad1.b && !spedUp) {
+        if (gamepad1.y && !spedUp) {
             spedUp = true;
             speed = 1;
-        } else if (gamepad1.b && spedUp) {
+        } else if (gamepad1.y && spedUp) {
             spedUp = false;
             speed = 0.5;
         }
@@ -121,6 +153,7 @@ public class MainTeleOp extends OpMode {
         telemetry.addData("Status", "Run Time: " + runtime.toString());
         telemetry.addData("Motors", "front left (%.2f), front right (%.2f), back left (%.2f), back right (%.2f)", frontLeftPower, frontRightPower, backLeftPower, backRightPower);
         telemetry.addData("Speed Modifier (%.1f)", speed);
+        telemetry.addData("Intake", intake.getPower());
         //telemetry.addData("Carousel", carousel);
         //telemetry.addData("Arm", arm.getPowerFloat());
         //telemetry.addData("Claw", claw.getPosition());

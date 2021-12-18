@@ -1,17 +1,15 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.deprecated;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Disabled
-@Autonomous(name = "Auto2")
-public class Auto2 extends LinearOpMode {
+@Autonomous(name = "Auto1")
+public class Auto1 extends LinearOpMode {
     private final ElapsedTime runtime = new ElapsedTime();
 
     // Initializes drive motors to null
@@ -21,8 +19,7 @@ public class Auto2 extends LinearOpMode {
     private static DcMotor backRight = null;
     private static DcMotor carouselMotor = null;
     private static ColorSensor color = null;
-    private static DcMotor arm = null;
-    private static Servo claw = null;
+
     // measure
     private static final double COUNTS_PER_REV = 1120.0;
     private static final double WHEEL_DIAMETER = 4.0;
@@ -43,17 +40,12 @@ public class Auto2 extends LinearOpMode {
         backLeft = hardwareMap.get(DcMotor.class, "bldrive");
         backRight = hardwareMap.get(DcMotor.class, "brdrive");
         carouselMotor = hardwareMap.get(DcMotor.class, "carousel");
-        arm = hardwareMap.get(DcMotor.class, "arm");
-        claw = hardwareMap.get(Servo.class, "claw");
-
 //        color = hardwareMap.get(ColorSensor.class, "colorSensor");
         frontLeft.setDirection(DcMotor.Direction.REVERSE);
         frontRight.setDirection(DcMotor.Direction.FORWARD);
         backLeft.setDirection(DcMotor.Direction.REVERSE);
         backRight.setDirection(DcMotor.Direction.FORWARD);
         carouselMotor.setDirection(DcMotor.Direction.FORWARD);
-        arm.setDirection(DcMotor.Direction.FORWARD);
-        claw.setDirection(Servo.Direction.REVERSE);
 
         frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
@@ -63,39 +55,16 @@ public class Auto2 extends LinearOpMode {
         waitForStart();
         start();
 
-        //Parks from third square to warehouse
+        strafeLeft(5, 1, 1);
 
-        moveForward(500);
-        while (frontLeft.isBusy() && frontRight.isBusy() && backLeft.isBusy() && backRight.isBusy()) {
-            telemetry.addData("stat", "running");
-        }
+//        moveLeft(15); // CHANGE LATER
+//        while (frontLeft.isBusy() && frontRight.isBusy() && backLeft.isBusy() && backRight.isBusy()) {
+//            telemetry.addData("stat", "running");
+//        }
         frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        setSpeed(0);
-
-        pivotRight(500);
-        while (frontLeft.isBusy() && frontRight.isBusy() && backLeft.isBusy() && backRight.isBusy()) {
-            telemetry.addData("stat", "running");
-        }
-        frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        frontLeft.setPower(0);
-        frontRight.setPower(0);
-        backLeft.setPower(0);
-        backRight.setPower(0);
-    }
-
-    public void setSpeed(double speed) {
-        frontLeft.setPower(speed);
-        frontRight.setPower(speed);
-        backLeft.setPower(speed);
-        backRight.setPower(speed);
     }
 
     public void spinCarousel(int milliseconds) {
@@ -119,14 +88,14 @@ public class Auto2 extends LinearOpMode {
         backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
-    public void moveBack(int ticks){
-        frontLeft.setTargetPosition(ticks);
+    public void moveBackward(int distance){
+        frontLeft.setTargetPosition((int) FORWARD_COUNTS_PER_INCH * distance);
         frontLeft.setPower(-1);
-        frontRight.setTargetPosition(ticks);
+        frontRight.setTargetPosition((int) FORWARD_COUNTS_PER_INCH * distance);
         frontRight.setPower(-1);
-        backLeft.setTargetPosition(ticks);
+        backLeft.setTargetPosition((int) FORWARD_COUNTS_PER_INCH * distance);
         backLeft.setPower(-1);
-        backRight.setTargetPosition(ticks);
+        backRight.setTargetPosition((int) FORWARD_COUNTS_PER_INCH * distance);
         backRight.setPower(-1);
         frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -134,14 +103,14 @@ public class Auto2 extends LinearOpMode {
         backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
-    public void moveLeft(int ticks){
-        frontLeft.setTargetPosition(ticks*-1);
+    public void moveLeft(int distance){
+        frontLeft.setTargetPosition((int) SIDE_COUNTS_PER_INCH * distance * -1);
         frontLeft.setPower(-1);
-        frontRight.setTargetPosition(ticks);
+        frontRight.setTargetPosition((int) SIDE_COUNTS_PER_INCH * distance);
         frontRight.setPower(1);
-        backLeft.setTargetPosition(ticks);
+        backLeft.setTargetPosition((int) SIDE_COUNTS_PER_INCH * distance);
         backLeft.setPower(1);
-        backRight.setTargetPosition(ticks*-1);
+        backRight.setTargetPosition((int) SIDE_COUNTS_PER_INCH * distance * -1);
         backRight.setPower(-1);
         frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -152,9 +121,9 @@ public class Auto2 extends LinearOpMode {
     public void moveRight(int ticks){
         frontLeft.setTargetPosition(ticks);
         frontLeft.setPower(1);
-        frontRight.setTargetPosition(ticks*-1);
+        frontRight.setTargetPosition(ticks);
         frontRight.setPower(-1);
-        backLeft.setTargetPosition(ticks*-1);
+        backLeft.setTargetPosition(ticks);
         backLeft.setPower(-1);
         backRight.setTargetPosition(ticks);
         backRight.setPower(1);
@@ -180,22 +149,44 @@ public class Auto2 extends LinearOpMode {
     }
 
     public void pivotRight(int ticks){
-        frontLeft.setTargetPosition(-ticks);
-
-        //frontRight.setTargetPosition(-ticks);
-
+        frontLeft.setTargetPosition(ticks);
+        frontLeft.setPower(-1);
+        frontRight.setTargetPosition(ticks);
+        frontRight.setPower(1);
         backLeft.setTargetPosition(ticks);
-
-        //backRight.setTargetPosition(-ticks);
-
+        backLeft.setPower(-1);
+        backRight.setTargetPosition(ticks);
+        backRight.setPower(1);
         frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        frontLeft.setPower(1);
-        frontRight.setPower(0);
-        backLeft.setPower(1);
-        backRight.setPower(0);
     }
+
+    public void strafeLeft(double inches, double speed, double coeff) {
+
+        //resetMotors();
+
+        int target = (int)(Math.round(inches * FORWARD_COUNTS_PER_INCH * coeff));
+
+        frontLeft.setTargetPosition(frontLeft.getCurrentPosition() - target); frontRight.setTargetPosition(frontRight.getCurrentPosition() + target);
+        backLeft.setTargetPosition(backLeft.getCurrentPosition() + target); backRight.setTargetPosition(backRight.getCurrentPosition() - target);
+        //runMotors(speed);
+        setSpeed(speed);
+        while(opModeIsActive() && frontLeft.isBusy() && frontRight.isBusy() && backLeft.isBusy() && backRight.isBusy()) {
+
+        }
+
+        setSpeed(0);
+
+    }
+
+    public void setSpeed(double speed) {
+        frontLeft.setPower(speed);
+        frontRight.setPower(speed);
+        backLeft.setPower(speed);
+        backRight.setPower(speed);
+    }
+
+
 }

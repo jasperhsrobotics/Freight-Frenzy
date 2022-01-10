@@ -1,15 +1,13 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@TeleOp(name = "TeleOp")
-public class MainTeleOp extends OpMode {
+@TeleOp(name = "TeleOp Test")
+public class MainTeleOp1 extends OpMode {
     private ElapsedTime runtime = new ElapsedTime();
 
     // Initializes drive motors to null
@@ -90,19 +88,19 @@ public class MainTeleOp extends OpMode {
 
 
         // INTAKE
-        if (gamepad1.dpad_down && !intakeOn) {
+        if (gamepad1.right_bumper && !intakeOn) {
             intakeOn = true;
-            intake.setPower(0.8);
-        } else if (gamepad1.dpad_up || gamepad2.dpad_down && intakeOn) {
+            intake.setPower(0.7);
+        } else if ((gamepad1.left_bumper || gamepad2.right_bumper) && intakeOn) {
             intakeOn = false;
             intake.setPower(0);
         }
-        if (gamepad1.dpad_up && !intakeOn) {
+        if (gamepad1.left_bumper && !intakeOn) {
             intakeOn = true;
-            intake.setPower(-0.6);
+            intake.setPower(-0.8);
         }
 
-        if (gamepad1.dpad_right || gamepad1.dpad_left) {
+        if (gamepad1.a) {
             intakeOn = false;
             intake.setPower(0);
         }
@@ -114,11 +112,11 @@ public class MainTeleOp extends OpMode {
             carouselRight.setPower(0);
         }
 
-        if (gamepad1.left_bumper) {
+        if (gamepad1.dpad_up) {
             arm.setDirection(DcMotor.Direction.FORWARD);
             arm.setPower(0.5);
         }
-        else if (gamepad1.right_bumper) {
+        else if (gamepad1.dpad_down) {
             arm.setDirection(DcMotor.Direction.REVERSE);
             arm.setPower(0.5);
         }

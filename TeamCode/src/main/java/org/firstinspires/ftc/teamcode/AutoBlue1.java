@@ -7,8 +7,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 
-@Autonomous(name = "Auto Blue")
-public class AutoBlue extends LinearOpMode {
+@Autonomous(name = "Blue Right(Carousel+Warehouse)")
+public class AutoBlue1 extends LinearOpMode {
     private final ElapsedTime runtime = new ElapsedTime();
 
     // Initializes drive motors to null
@@ -64,7 +64,7 @@ public class AutoBlue extends LinearOpMode {
         frontRight.setPower(-0.1);
         backLeft.setPower(-0.1);
         backRight.setPower(-0.1);
-        spinCarousel(3000, -1);
+        spinCarousel(4000, -1);
         frontLeft.setPower(0);
         frontRight.setPower(0);
         backLeft.setPower(0);
@@ -75,7 +75,7 @@ public class AutoBlue extends LinearOpMode {
         strafeLeft(150, 0.3);
         pivotLeft(180, 0.3);
         strafeRight(150, 0.2);
-        strafeLeft(15, 0.1);
+        strafeLeft(10, 0.2);
         moveBackward(750, 0.1);
     }
 

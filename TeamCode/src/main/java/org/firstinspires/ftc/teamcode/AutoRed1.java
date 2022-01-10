@@ -4,11 +4,12 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 
-@Autonomous(name = "Auto Red")
-public class AutoRed extends LinearOpMode {
+@Autonomous(name = "Red Left(Carousel+Warehouse")
+public class AutoRed1 extends LinearOpMode {
     private final ElapsedTime runtime = new ElapsedTime();
 
     // Initializes drive motors to null
@@ -49,7 +50,7 @@ public class AutoRed extends LinearOpMode {
             wheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             wheel.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         }
-
+        carouselMotorLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         telemetry.addData("Path0",  "Starting at %7d :%7d :%7d :%7d", frontLeft.getCurrentPosition(), frontRight.getCurrentPosition(), backLeft.getCurrentPosition(), backRight.getCurrentPosition());
         telemetry.update();
 
@@ -57,17 +58,27 @@ public class AutoRed extends LinearOpMode {
 
         moveForward(50, 0.1);
         strafeLeft(200, 0.7);
-        strafeLeft(100, 0.3);
-        moveBackward(9, 0.05);
+        strafeLeft(125, 0.3);
+        moveBackward(30, 0.1);
 
+        frontLeft.setPower(-0.1);
+        frontRight.setPower(-0.1);
+        backLeft.setPower(-0.1);
+        backRight.setPower(-0.1);
         spinCarousel(3000, 1);
+        frontLeft.setPower(0);
+        frontRight.setPower(0);
+        backLeft.setPower(0);
+        backRight.setPower(0);
 
         moveForward(30, 0.3);
         strafeRight(150, 0.3);
         pivotRight(180, 0.3);
         strafeLeft(150, 0.2);
-        strafeRight(30, 0.1);
+        strafeRight(10, 0.1);
         moveBackward(750, 0.1);
+
+        //END
 
 
         /*/

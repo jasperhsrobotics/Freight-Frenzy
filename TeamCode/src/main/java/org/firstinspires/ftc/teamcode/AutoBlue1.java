@@ -18,6 +18,8 @@ public class AutoBlue1 extends LinearOpMode {
     private static DcMotor backRight = null;
     private static DcMotor carouselMotorLeft = null;
     private static DcMotor carouselMotorRight = null;
+    private static DcMotor arm = null;
+    private static DcMotor intake = null;
 //    private static ColorSensor color = null;
 
     DcMotor[] wheels = new DcMotor[4];
@@ -33,11 +35,15 @@ public class AutoBlue1 extends LinearOpMode {
         backRight = hardwareMap.get(DcMotor.class, "brdrive");
         carouselMotorLeft = hardwareMap.get(DcMotor.class, "carouselL");
         carouselMotorRight = hardwareMap.get(DcMotor.class, "carouselR");
+        intake = hardwareMap.get(DcMotor.class, "intake");
+        arm = hardwareMap.get(DcMotor.class, "arm");
         frontLeft.setDirection(DcMotor.Direction.REVERSE);
         frontRight.setDirection(DcMotor.Direction.FORWARD);
         backLeft.setDirection(DcMotor.Direction.REVERSE);
         backRight.setDirection(DcMotor.Direction.FORWARD);
         carouselMotorRight.setDirection(DcMotor.Direction.REVERSE);
+        intake.setDirection(DcMotor.Direction.REVERSE);
+        arm.setDirection(DcMotor.Direction.FORWARD);
 
         wheels[0] = frontLeft;
         wheels[1] = frontRight;
@@ -56,9 +62,9 @@ public class AutoBlue1 extends LinearOpMode {
         waitForStart();
 
         moveForward(50, 0.1);
-        strafeRight(150, 0.7);
-        strafeRight(150, 0.3);
-        moveBackward(20, 0.1);
+        strafeRight(170, 0.7);
+        strafeRight(120, 0.3);
+        moveBackward(50, 0.1);
 
         frontLeft.setPower(-0.1);
         frontRight.setPower(-0.1);
@@ -73,10 +79,13 @@ public class AutoBlue1 extends LinearOpMode {
 
         moveForward(30, 0.3);
         strafeLeft(150, 0.3);
-        pivotLeft(180, 0.3);
-        strafeRight(150, 0.2);
-        strafeLeft(10, 0.2);
-        moveBackward(750, 0.1);
+        pivotRight(130, 0.3);
+        moveForward(100, 0.4);
+//        strafeLeft(130, 0.2);
+//        strafeRight(30, 0.2);
+//        moveForward(250, 0.1);
+//        pivotRight(100, 0.3);
+//        moveForward(500, 0.1);
     }
 
     public void spinCarousel(int time, int power)

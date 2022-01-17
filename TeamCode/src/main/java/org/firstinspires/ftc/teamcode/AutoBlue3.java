@@ -16,6 +16,8 @@ public class AutoBlue3 extends LinearOpMode {
     private static DcMotor backRight = null;
     private static DcMotor carouselMotorLeft = null;
     private static DcMotor carouselMotorRight = null;
+    private static DcMotor arm = null;
+    private static DcMotor intake = null;
 //    private static ColorSensor color = null;
 
     DcMotor[] wheels = new DcMotor[4];
@@ -31,11 +33,15 @@ public class AutoBlue3 extends LinearOpMode {
         backRight = hardwareMap.get(DcMotor.class, "brdrive");
         carouselMotorLeft = hardwareMap.get(DcMotor.class, "carouselL");
         carouselMotorRight = hardwareMap.get(DcMotor.class, "carouselR");
+        intake = hardwareMap.get(DcMotor.class, "intake");
+        arm = hardwareMap.get(DcMotor.class, "arm");
         frontLeft.setDirection(DcMotor.Direction.REVERSE);
         frontRight.setDirection(DcMotor.Direction.FORWARD);
         backLeft.setDirection(DcMotor.Direction.REVERSE);
         backRight.setDirection(DcMotor.Direction.FORWARD);
         carouselMotorRight.setDirection(DcMotor.Direction.REVERSE);
+        intake.setDirection(DcMotor.Direction.REVERSE);
+        arm.setDirection(DcMotor.Direction.FORWARD);
 
         wheels[0] = frontLeft;
         wheels[1] = frontRight;

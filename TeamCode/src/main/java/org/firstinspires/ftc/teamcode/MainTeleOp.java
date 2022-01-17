@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -26,7 +25,7 @@ public class MainTeleOp extends OpMode {
     private boolean braking = false;
     private double speed;
     private boolean spedUp;
-    private boolean intakeOn = true;
+    private boolean intakeOn;
 
     /*
      * Code to run ONCE when the driver hits INIT
@@ -62,6 +61,8 @@ public class MainTeleOp extends OpMode {
 
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialized");
+
+        arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
     @Override
@@ -90,19 +91,22 @@ public class MainTeleOp extends OpMode {
 
 
         // INTAKE
-        if (gamepad1.dpad_down && !intakeOn) {
+        if (gamepad1.right_bumper && !intakeOn) {
             intakeOn = true;
-            intake.setPower(0.8);
-        } else if (gamepad1.dpad_up || gamepad2.dpad_down && intakeOn) {
+            intake.setPower(0.9);
+        } else if ((gamepad1.left_bumper || gamepad2.right_bumper) && intakeOn) {
             intakeOn = false;
-            intake.setPower(0);
+            intake.setPower(-0.15);
         }
-        if (gamepad1.dpad_up && !intakeOn) {
+        if (gamepad1.left_bumper && !intakeOn) {
             intakeOn = true;
-            intake.setPower(-0.6);
+            intake.setPower(-0.7);
+        } else if (gamepad1.left_trigger > 0 && !intakeOn) {
+            intakeOn = true;
+            intake.setPower(0.4);
         }
 
-        if (gamepad1.dpad_right || gamepad1.dpad_left) {
+        if (gamepad1.a) {
             intakeOn = false;
             intake.setPower(0);
         }
@@ -114,11 +118,13 @@ public class MainTeleOp extends OpMode {
             carouselRight.setPower(0);
         }
 
-        if (gamepad1.left_bumper) {
+
+
+        if (gamepad1.dpad_up) {
             arm.setDirection(DcMotor.Direction.FORWARD);
             arm.setPower(0.5);
         }
-        else if (gamepad1.right_bumper) {
+        else if (gamepad1.dpad_down) {
             arm.setDirection(DcMotor.Direction.REVERSE);
             arm.setPower(0.5);
         }
@@ -138,7 +144,7 @@ public class MainTeleOp extends OpMode {
         // MOVEMENT
 
         double y = -gamepad1.left_stick_y; // Remember, this is reversed!
-        double x = gamepad1.left_stick_x * 1.1; // Counteract imperfect strafing
+        double x = gamepad1.left_stick_x * 1.2; // Counteract imperfect strafing
         double rx = gamepad1.right_stick_x;
 
         // Denominator is the largest motor power (absolute value) or 1
@@ -162,7 +168,7 @@ public class MainTeleOp extends OpMode {
         telemetry.addData("Speed Modifier (%.1f)", speed);
         telemetry.addData("Intake", intake.getPower());
         //telemetry.addData("Carousel", carousel);
-        //telemetry.addData("Arm", arm.getPowerFloat());
+        //telemetry.addData("Arm", arm.getCurrentPosition());
         //telemetry.addData("Claw", claw.getPosition());
     }
 }

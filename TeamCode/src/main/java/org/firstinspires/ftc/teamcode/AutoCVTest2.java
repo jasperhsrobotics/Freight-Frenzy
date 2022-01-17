@@ -22,8 +22,8 @@ import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 
-@Autonomous(name = "Auto CV test")
-public class AutoCVTest extends LinearOpMode {
+@Autonomous(name = "Auto CV test red")
+public class AutoCVTest2 extends LinearOpMode {
     private final ElapsedTime runtime = new ElapsedTime();
 
     // Initializes drive motors to null
@@ -107,7 +107,7 @@ public class AutoCVTest extends LinearOpMode {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
 
-        webcam.setPipeline(new AutoCVTest.SamplePipeline());
+        webcam.setPipeline(new AutoCVTest2.SamplePipeline());
         webcam.setMillisecondsPermissionTimeout(2500);
 
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
@@ -147,39 +147,39 @@ public class AutoCVTest extends LinearOpMode {
 
 
         moveForward(50, 0.1);
-        strafeRight(170, 0.7);
-        strafeRight(110, 0.3);
-        moveBackward(50, 0.1);
+        strafeLeft(200, 0.7);
+        strafeLeft(125, 0.3);
+        moveBackward(30, 0.1);
 
-        frontLeft.setPower(-0.1);
-        frontRight.setPower(-0.1);
-        backLeft.setPower(-0.1);
-        backRight.setPower(-0.1);
-        spinCarousel(4000, 1);
+        frontLeft.setPower(-0.07);
+        frontRight.setPower(-0.07);
+        backLeft.setPower(-0.07);
+        backRight.setPower(-0.07);
+        spinCarousel(2700, 1);
         frontLeft.setPower(0);
         frontRight.setPower(0);
         backLeft.setPower(0);
         backRight.setPower(0);
 
-
         moveForward(30, 0.3);
-        strafeLeft(150, 0.3);
-        pivotRight(130, 0.3);
-        moveForward(100, 0.4);
+        strafeRight(150, 0.3);
+        pivotLeft(15, 0.3);
+        moveForward(120, 0.2);
+        pivotLeft(50, 0.1);
 
         if (loc == Location.MIDDLE) {
             // move code
             arm.setPower(0.5);
-            sleep(600);
+            sleep(5900);
             arm.setPower(0.2);
         } else if (loc == Location.LEFT) {
             // move code
             arm.setPower(0.5);
-            sleep(300);
+            sleep(200);
             arm.setPower(0.2);
         } else {
             arm.setPower(0.5);
-            sleep(900);
+            sleep(800);
             arm.setPower(0.2);
         }
         intake.setPower(0.7);
@@ -443,7 +443,7 @@ public class AutoCVTest extends LinearOpMode {
 
     class SamplePipeline extends OpenCvPipeline {
         boolean viewportPaused;
-        AutoCVTest.Location location;
+        AutoCVTest2.Location location;
         @Override
         public Mat processFrame(Mat input) {
             Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGB2HSV);
@@ -516,5 +516,5 @@ public class AutoCVTest extends LinearOpMode {
             }
         }
 
-     }
+    }
 }

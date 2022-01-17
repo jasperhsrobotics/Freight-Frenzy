@@ -19,6 +19,8 @@ public class AutoRed1 extends LinearOpMode {
     private static DcMotor backRight = null;
     private static DcMotor carouselMotorLeft = null;
     private static DcMotor carouselMotorRight = null;
+    private static DcMotor arm = null;
+    private static DcMotor intake = null;
 //    private static ColorSensor color = null;
 
     DcMotor[] wheels = new DcMotor[4];
@@ -34,11 +36,15 @@ public class AutoRed1 extends LinearOpMode {
         backRight = hardwareMap.get(DcMotor.class, "brdrive");
         carouselMotorLeft = hardwareMap.get(DcMotor.class, "carouselL");
         carouselMotorRight = hardwareMap.get(DcMotor.class, "carouselR");
+        intake = hardwareMap.get(DcMotor.class, "intake");
+        arm = hardwareMap.get(DcMotor.class, "arm");
         frontLeft.setDirection(DcMotor.Direction.REVERSE);
         frontRight.setDirection(DcMotor.Direction.FORWARD);
         backLeft.setDirection(DcMotor.Direction.REVERSE);
         backRight.setDirection(DcMotor.Direction.FORWARD);
         carouselMotorRight.setDirection(DcMotor.Direction.REVERSE);
+        intake.setDirection(DcMotor.Direction.REVERSE);
+        arm.setDirection(DcMotor.Direction.FORWARD);
 
         wheels[0] = frontLeft;
         wheels[1] = frontRight;
@@ -65,7 +71,7 @@ public class AutoRed1 extends LinearOpMode {
         frontRight.setPower(-0.1);
         backLeft.setPower(-0.1);
         backRight.setPower(-0.1);
-        spinCarousel(3000, 1);
+        spinCarousel(4000, 1);
         frontLeft.setPower(0);
         frontRight.setPower(0);
         backLeft.setPower(0);
@@ -73,10 +79,10 @@ public class AutoRed1 extends LinearOpMode {
 
         moveForward(30, 0.3);
         strafeRight(150, 0.3);
-        pivotRight(180, 0.3);
-        strafeLeft(150, 0.2);
-        strafeRight(10, 0.1);
-        moveBackward(750, 0.1);
+        pivotLeft(180, 0.3);
+        strafeRight(150, 0.2);
+        strafeLeft(10, 0.1);
+        moveForward(750, 0.1);
 
         //END
 
@@ -90,7 +96,7 @@ public class AutoRed1 extends LinearOpMode {
 //        strafeRight(12, 1);
 //        rotate(180);
 
-//        encoderDrive(DRIVE_SPEED,  -10,  10, 10, -10, 5.0);
+//        encoderDrive(DRIVE_SPEED,   -10,  10, 10, -10, 5.0);
 //        encoderDrive(DRIVE_SPEED,  8,  8, 8, 8, 5.0);
 //        encoderDrive(DRIVE_SPEED,  18,  -18, -18, 18, 5.0);
 //        encoderDrive(DRIVE_SPEED,  -6,  6, -6, 6, 5.0);
@@ -109,6 +115,43 @@ public class AutoRed1 extends LinearOpMode {
         sleep(time);
         carouselMotorRight.setPower(0);
         carouselMotorLeft.setPower(0);
+    }
+
+    public void pivotLeft(int ticks, double speed) {
+        //int target = (int)(Math.round(inches * COUNTS_PER_INCH));
+        int target = ticks;
+
+        wheels[0].setTargetPosition(wheels[0].getCurrentPosition() + target);
+        wheels[1].setTargetPosition(wheels[1].getCurrentPosition() - target);
+        wheels[2].setTargetPosition(wheels[2].getCurrentPosition() + target);
+        wheels[3].setTargetPosition(wheels[3].getCurrentPosition() - target);
+
+        for (int i = 0; i < 4; i++) {
+
+            // Tells the motor to drive until they reach the target position
+            wheels[i].setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        }
+//        runtime.reset();
+
+        frontLeft.setPower(speed);
+        backLeft.setPower(speed);
+        backRight.setPower(speed);
+        frontRight.setPower(speed);
+
+        while (opModeIsActive() && frontLeft.isBusy() && backLeft.isBusy() && backRight.isBusy() && frontRight.isBusy()) {
+//            telemetry.addData("Path1",  "Running to %7d :%7d :%7d :%7d", newWheelTarget[0],  newWheelTarget[1], newWheelTarget[2], newWheelTarget[3]);
+            telemetry.addData("Path2",  "Running at %7d :%7d :%7d :%7d", frontLeft.getCurrentPosition(), frontRight.getCurrentPosition(), backRight.getCurrentPosition(), backLeft.getCurrentPosition());
+            telemetry.update();
+        }
+
+        for (DcMotor wheel : wheels){
+            // Stops motors after motors have reached target position
+            wheel.setPower(0);
+
+            // Resets encoders
+            wheel.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            wheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        }
     }
 
     public void pivotRight(int ticks, double speed) {

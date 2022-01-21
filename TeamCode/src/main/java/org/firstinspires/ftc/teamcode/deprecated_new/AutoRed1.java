@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 
-@Disabled
+
 @Autonomous(name = "Red Left(Carousel+Warehouse")
 public class AutoRed1 extends LinearOpMode {
     private final ElapsedTime runtime = new ElapsedTime();

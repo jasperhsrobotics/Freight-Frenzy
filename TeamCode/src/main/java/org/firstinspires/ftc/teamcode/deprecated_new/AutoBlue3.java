@@ -1,14 +1,14 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.deprecated_new;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.hardware.ColorSensor;
 
-@Autonomous(name = "Blue Right(Carousel+Warehouse)")
-public class AutoBlue1 extends LinearOpMode {
+@Disabled
+@Autonomous(name = "Blue Right(Warehouse)")
+public class AutoBlue3 extends LinearOpMode {
     private final ElapsedTime runtime = new ElapsedTime();
 
     // Initializes drive motors to null
@@ -61,31 +61,9 @@ public class AutoBlue1 extends LinearOpMode {
 
         waitForStart();
 
-        moveForward(50, 0.1);
-        strafeRight(170, 0.7);
-        strafeRight(120, 0.3);
-        moveBackward(50, 0.1);
+        moveForward(250, 0.1);
+        strafeRight(240, 0.3);
 
-        frontLeft.setPower(-0.1);
-        frontRight.setPower(-0.1);
-        backLeft.setPower(-0.1);
-        backRight.setPower(-0.1);
-        spinCarousel(4000, -1);
-        frontLeft.setPower(0);
-        frontRight.setPower(0);
-        backLeft.setPower(0);
-        backRight.setPower(0);
-
-
-        moveForward(30, 0.3);
-        strafeLeft(150, 0.3);
-        pivotRight(130, 0.3);
-        moveForward(100, 0.4);
-//        strafeLeft(130, 0.2);
-//        strafeRight(30, 0.2);
-//        moveForward(250, 0.1);
-//        pivotRight(100, 0.3);
-//        moveForward(500, 0.1);
     }
 
     public void spinCarousel(int time, int power)

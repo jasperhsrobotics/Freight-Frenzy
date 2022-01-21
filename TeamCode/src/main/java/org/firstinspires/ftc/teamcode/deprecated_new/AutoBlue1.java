@@ -1,13 +1,15 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.deprecated_new;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 
-@Autonomous(name = "Red Left(Carousel+SU)")
-public class AutoRed2 extends LinearOpMode {
+@Disabled
+@Autonomous(name = "Blue Right(Carousel+Warehouse)")
+public class AutoBlue1 extends LinearOpMode {
     private final ElapsedTime runtime = new ElapsedTime();
 
     // Initializes drive motors to null
@@ -54,51 +56,37 @@ public class AutoRed2 extends LinearOpMode {
             wheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             wheel.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         }
-        carouselMotorLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+
         telemetry.addData("Path0",  "Starting at %7d :%7d :%7d :%7d", frontLeft.getCurrentPosition(), frontRight.getCurrentPosition(), backLeft.getCurrentPosition(), backRight.getCurrentPosition());
         telemetry.update();
 
         waitForStart();
 
         moveForward(50, 0.1);
-        strafeLeft(200, 0.7);
-        strafeLeft(125, 0.3);
-        moveBackward(30  , 0.1);
+        strafeRight(170, 0.7);
+        strafeRight(120, 0.3);
+        moveBackward(50, 0.1);
 
         frontLeft.setPower(-0.1);
         frontRight.setPower(-0.1);
         backLeft.setPower(-0.1);
         backRight.setPower(-0.1);
-        spinCarousel(4000, 1);
+        spinCarousel(4000, -1);
         frontLeft.setPower(0);
         frontRight.setPower(0);
         backLeft.setPower(0);
         backRight.setPower(0);
 
-        moveForward(100, 0.1);
 
-        //END
-
-
-        /*/
-        moveForward(17,1);
-        sleep(6500);
-        */
-//        strafeLeft(25,1);
-//        moveForward(10,1);
-//        strafeRight(12, 1);
-//        rotate(180);
-
-//        encoderDrive(DRIVE_SPEED,  -10,  10, 10, -10, 5.0);
-//        encoderDrive(DRIVE_SPEED,  8,  8, 8, 8, 5.0);
-//        encoderDrive(DRIVE_SPEED,  18,  -18, -18, 18, 5.0);
-//        encoderDrive(DRIVE_SPEED,  -6,  6, -6, 6, 5.0);
-//        encoderDrive(DRIVE_SPEED,  -5.5,  -5.5, -5.5, -5.5, 5.0);
-//        encoderDrive(DRIVE_SPEED,  12.8,  12.8, 12.8, 12.8, 5.0);
-//        encoderDrive(DRIVE_SPEED,  -6,  6, -6, 6, 5.0);
-//        encoderDrive(DRIVE_SPEED,  -9,  -9, -9, -9, 5.0);
-//        encoderDrive(TURN_SPEED,   12, -12, 12, -12, 4.0);  // S2: Turn Right 12 Inches with 4 Sec timeout
-//        encoderDrive(DRIVE_SPEED, -24, -24, -24, -24, 4.0);  // S3: Reverse 24 Inches with 4 Sec timeout
+        moveForward(30, 0.3);
+        strafeLeft(150, 0.3);
+        pivotRight(130, 0.3);
+        moveForward(100, 0.4);
+//        strafeLeft(130, 0.2);
+//        strafeRight(30, 0.2);
+//        moveForward(250, 0.1);
+//        pivotRight(100, 0.3);
+//        moveForward(500, 0.1);
     }
 
     public void spinCarousel(int time, int power)
@@ -108,6 +96,43 @@ public class AutoRed2 extends LinearOpMode {
         sleep(time);
         carouselMotorRight.setPower(0);
         carouselMotorLeft.setPower(0);
+    }
+
+    public void pivotLeft(int ticks, double speed) {
+        //int target = (int)(Math.round(inches * COUNTS_PER_INCH));
+        int target = ticks;
+
+        wheels[0].setTargetPosition(wheels[0].getCurrentPosition() + target);
+        wheels[1].setTargetPosition(wheels[1].getCurrentPosition() - target);
+        wheels[2].setTargetPosition(wheels[2].getCurrentPosition() + target);
+        wheels[3].setTargetPosition(wheels[3].getCurrentPosition() - target);
+
+        for (int i = 0; i < 4; i++) {
+
+            // Tells the motor to drive until they reach the target position
+            wheels[i].setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        }
+//        runtime.reset();
+
+        frontLeft.setPower(speed);
+        backLeft.setPower(speed);
+        backRight.setPower(speed);
+        frontRight.setPower(speed);
+
+        while (opModeIsActive() && frontLeft.isBusy() && backLeft.isBusy() && backRight.isBusy() && frontRight.isBusy()) {
+//            telemetry.addData("Path1",  "Running to %7d :%7d :%7d :%7d", newWheelTarget[0],  newWheelTarget[1], newWheelTarget[2], newWheelTarget[3]);
+            telemetry.addData("Path2",  "Running at %7d :%7d :%7d :%7d", frontLeft.getCurrentPosition(), frontRight.getCurrentPosition(), backRight.getCurrentPosition(), backLeft.getCurrentPosition());
+            telemetry.update();
+        }
+
+        for (DcMotor wheel : wheels){
+            // Stops motors after motors have reached target position
+            wheel.setPower(0);
+
+            // Resets encoders
+            wheel.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            wheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        }
     }
 
     public void pivotRight(int ticks, double speed) {

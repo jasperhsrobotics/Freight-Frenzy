@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.deprecated_new;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
@@ -6,10 +6,10 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.hardware.ColorSensor;
 
-@Autonomous(name = "Red Left(Carousel+Warehouse")
-public class AutoRed1 extends LinearOpMode {
+@Disabled
+@Autonomous(name = "Red Left(Warehouse)")
+public class AutoRed3 extends LinearOpMode {
     private final ElapsedTime runtime = new ElapsedTime();
 
     // Initializes drive motors to null
@@ -62,27 +62,8 @@ public class AutoRed1 extends LinearOpMode {
 
         waitForStart();
 
-        moveForward(50, 0.1);
-        strafeLeft(200, 0.7);
-        strafeLeft(125, 0.3);
-        moveBackward(30, 0.1);
-
-        frontLeft.setPower(-0.1);
-        frontRight.setPower(-0.1);
-        backLeft.setPower(-0.1);
-        backRight.setPower(-0.1);
-        spinCarousel(4000, 1);
-        frontLeft.setPower(0);
-        frontRight.setPower(0);
-        backLeft.setPower(0);
-        backRight.setPower(0);
-
-        moveForward(30, 0.3);
-        strafeRight(150, 0.3);
-        pivotLeft(180, 0.3);
-        strafeRight(150, 0.2);
-        strafeLeft(10, 0.1);
-        moveForward(750, 0.1);
+        moveForward(250, 0.1);
+        strafeLeft(240, 0.3);
 
         //END
 
@@ -96,7 +77,7 @@ public class AutoRed1 extends LinearOpMode {
 //        strafeRight(12, 1);
 //        rotate(180);
 
-//        encoderDrive(DRIVE_SPEED,   -10,  10, 10, -10, 5.0);
+//        encoderDrive(DRIVE_SPEED,  -10,  10, 10, -10, 5.0);
 //        encoderDrive(DRIVE_SPEED,  8,  8, 8, 8, 5.0);
 //        encoderDrive(DRIVE_SPEED,  18,  -18, -18, 18, 5.0);
 //        encoderDrive(DRIVE_SPEED,  -6,  6, -6, 6, 5.0);
@@ -115,43 +96,6 @@ public class AutoRed1 extends LinearOpMode {
         sleep(time);
         carouselMotorRight.setPower(0);
         carouselMotorLeft.setPower(0);
-    }
-
-    public void pivotLeft(int ticks, double speed) {
-        //int target = (int)(Math.round(inches * COUNTS_PER_INCH));
-        int target = ticks;
-
-        wheels[0].setTargetPosition(wheels[0].getCurrentPosition() + target);
-        wheels[1].setTargetPosition(wheels[1].getCurrentPosition() - target);
-        wheels[2].setTargetPosition(wheels[2].getCurrentPosition() + target);
-        wheels[3].setTargetPosition(wheels[3].getCurrentPosition() - target);
-
-        for (int i = 0; i < 4; i++) {
-
-            // Tells the motor to drive until they reach the target position
-            wheels[i].setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        }
-//        runtime.reset();
-
-        frontLeft.setPower(speed);
-        backLeft.setPower(speed);
-        backRight.setPower(speed);
-        frontRight.setPower(speed);
-
-        while (opModeIsActive() && frontLeft.isBusy() && backLeft.isBusy() && backRight.isBusy() && frontRight.isBusy()) {
-//            telemetry.addData("Path1",  "Running to %7d :%7d :%7d :%7d", newWheelTarget[0],  newWheelTarget[1], newWheelTarget[2], newWheelTarget[3]);
-            telemetry.addData("Path2",  "Running at %7d :%7d :%7d :%7d", frontLeft.getCurrentPosition(), frontRight.getCurrentPosition(), backRight.getCurrentPosition(), backLeft.getCurrentPosition());
-            telemetry.update();
-        }
-
-        for (DcMotor wheel : wheels){
-            // Stops motors after motors have reached target position
-            wheel.setPower(0);
-
-            // Resets encoders
-            wheel.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            wheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        }
     }
 
     public void pivotRight(int ticks, double speed) {

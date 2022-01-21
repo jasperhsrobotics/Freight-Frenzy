@@ -1,12 +1,27 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.deprecated_new;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@Autonomous(name = "Blue Right(Warehouse)")
-public class AutoBlue3 extends LinearOpMode {
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.opencv.imgproc.Imgproc;
+import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvCameraRotation;
+import org.openftc.easyopencv.OpenCvPipeline;
+import org.openftc.easyopencv.OpenCvWebcam;
+import org.opencv.core.Core;
+import org.opencv.core.Mat;
+import org.opencv.core.Point;
+import org.opencv.core.Rect;
+import org.opencv.core.Scalar;
+
+@Disabled
+@Autonomous(name = "Auto CV test red")
+public class AutoCVTest2 extends LinearOpMode {
     private final ElapsedTime runtime = new ElapsedTime();
 
     // Initializes drive motors to null
@@ -18,9 +33,44 @@ public class AutoBlue3 extends LinearOpMode {
     private static DcMotor carouselMotorRight = null;
     private static DcMotor arm = null;
     private static DcMotor intake = null;
-//    private static ColorSensor color = null;
+
+    // measure
+    static final double COUNTS_PER_MOTOR_REV = 1120;    // eg: TETRIX Motor Encoder
+    static final double DRIVE_GEAR_REDUCTION = 1;     // This is < 1.0 if geared UP
+    static final double WHEEL_DIAMETER_INCHES = 4.0;     // For figuring circumference
+    static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * Math.PI);
+    public static double TICK_ANGLE = 15;
+    static final double DRIVE_SPEED = 0.6;
+    static final double TURN_SPEED = 0.5;
+
+    static Location duckLocation = null;
 
     DcMotor[] wheels = new DcMotor[4];
+
+    OpenCvWebcam webcam;
+
+    Mat mat = new Mat();
+
+    public enum Location {
+        LEFT,
+        RIGHT,
+        MIDDLE,
+        NOT_FOUND
+    }
+
+    // 1280, 800
+    static final Rect LEFT_ROI = new Rect(
+            new Point(0, 200),
+            new Point(400, 600));
+
+    static final Rect MIDDLE_ROI = new Rect(
+            new Point(450, 200),
+            new Point(850, 600));
+
+    static final Rect RIGHT_ROI = new Rect(
+            new Point(900, 200),
+            new Point(1280, 600));
+    static double PERCENT_COLOR_THRESHOLD = 0.4;
 
     /**
      * Code to run
@@ -33,13 +83,15 @@ public class AutoBlue3 extends LinearOpMode {
         backRight = hardwareMap.get(DcMotor.class, "brdrive");
         carouselMotorLeft = hardwareMap.get(DcMotor.class, "carouselL");
         carouselMotorRight = hardwareMap.get(DcMotor.class, "carouselR");
-        intake = hardwareMap.get(DcMotor.class, "intake");
         arm = hardwareMap.get(DcMotor.class, "arm");
+        intake = hardwareMap.get(DcMotor.class, "intake");
+
         frontLeft.setDirection(DcMotor.Direction.REVERSE);
         frontRight.setDirection(DcMotor.Direction.FORWARD);
         backLeft.setDirection(DcMotor.Direction.REVERSE);
         backRight.setDirection(DcMotor.Direction.FORWARD);
-        carouselMotorRight.setDirection(DcMotor.Direction.REVERSE);
+        carouselMotorLeft.setDirection(DcMotor.Direction.REVERSE);
+        carouselMotorRight.setDirection(DcMotor.Direction.FORWARD);
         intake.setDirection(DcMotor.Direction.REVERSE);
         arm.setDirection(DcMotor.Direction.FORWARD);
 
@@ -48,20 +100,118 @@ public class AutoBlue3 extends LinearOpMode {
         wheels[2] = backLeft;
         wheels[3] = backRight;
 
-        for (DcMotor wheel : wheels){
-            wheel.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            wheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            wheel.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        }
+        // opencv
 
-        telemetry.addData("Path0",  "Starting at %7d :%7d :%7d :%7d", frontLeft.getCurrentPosition(), frontRight.getCurrentPosition(), backLeft.getCurrentPosition(), backRight.getCurrentPosition());
-        telemetry.update();
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
+
+        webcam.setPipeline(new AutoCVTest2.SamplePipeline());
+        webcam.setMillisecondsPermissionTimeout(2500);
+
+        webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
+        {
+            @Override
+            public void onOpened()
+            {
+                webcam.startStreaming(1280, 960, OpenCvCameraRotation.UPRIGHT);
+            }
+            @Override
+            public void onError(int errorCode)
+            {
+                // lmao teagan wtf is this error message
+                telemetry.addData("Status", "bad bad so bad how could u mess up this catastrophically");
+            }
+        });
 
         waitForStart();
 
-        moveForward(250, 0.1);
-        strafeRight(240, 0.3);
+        // IDK if java passes by reference or by value sooooo
+        Location loc;
+        if (duckLocation == Location.LEFT)
+        {
+            loc = Location.LEFT;
+        }
+        else if (duckLocation == Location.MIDDLE)
+        {
+            loc = Location.MIDDLE;
+        }
+        else
+        {
+            loc = Location.RIGHT;
+        }
 
+        telemetry.addData("location", loc);
+
+
+
+        moveForward(50, 0.1);
+        strafeLeft(200, 0.7);
+        strafeLeft(125, 0.3);
+        moveBackward(30, 0.1);
+
+        frontLeft.setPower(-0.07);
+        frontRight.setPower(-0.07);
+        backLeft.setPower(-0.07);
+        backRight.setPower(-0.07);
+        spinCarousel(2700, 1);
+        frontLeft.setPower(0);
+        frontRight.setPower(0);
+        backLeft.setPower(0);
+        backRight.setPower(0);
+
+        moveForward(30, 0.3);
+        strafeRight(150, 0.3);
+        pivotLeft(15, 0.3);
+        moveForward(120, 0.2);
+        pivotLeft(50, 0.1);
+
+        if (loc == Location.MIDDLE) {
+            // move code
+            arm.setPower(0.5);
+            sleep(5900);
+            arm.setPower(0.2);
+        } else if (loc == Location.LEFT) {
+            // move code
+            arm.setPower(0.5);
+            sleep(200);
+            arm.setPower(0.2);
+        } else {
+            arm.setPower(0.5);
+            sleep(800);
+            arm.setPower(0.2);
+        }
+        intake.setPower(0.7);
+        sleep(5000);
+        arm.setPower(0);
+        intake.setPower(0);
+
+
+        //if (loc == Location.LEFT) moveArm(200, 0.5);
+        //if (loc == Location.RIGHT) strafeRight(500, 0.3);
+        //if (loc == Location.MIDDLE) moveForward(500, 0.3);
+
+//        if (loc == Location.LEFT)
+//            strafeRight(900, 0.6);
+
+    }
+
+    public void moveArm(double ticks, double speed)
+    {
+        int target = (int)(Math.round(ticks));
+
+        arm.setTargetPosition(arm.getCurrentPosition() + target);
+        arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        while (opModeIsActive() && arm.isBusy())
+        {
+
+        }
+
+        frontLeft.setPower(0);
+
+        arm.setPower(0);
+        arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     public void spinCarousel(int time, int power)
@@ -289,53 +439,80 @@ public class AutoBlue3 extends LinearOpMode {
         }
     }
 
-//    public void encoderDrive(double speed, double front_left, double front_right, double back_left, double back_right, double timeoutS) {
-//        int []newWheelTarget = new int[4];
-//        // Ensure that the opmode is still active
-//        if (opModeIsActive()) {
-//            // Determine new target position, and pass to motor controller
-//            newWheelTarget[0] = wheels[0].getCurrentPosition() + (int)(front_left * COUNTS_PER_INCH);
-//            newWheelTarget[1] = wheels[1].getCurrentPosition() + (int)(front_right * COUNTS_PER_INCH);
-//            newWheelTarget[2] = wheels[2].getCurrentPosition() + (int)(back_left * COUNTS_PER_INCH);
-//            newWheelTarget[3] = wheels[3].getCurrentPosition() + (int)(back_right * COUNTS_PER_INCH);
-//
-//            for (int i = 0; i < 4; i++) {
-//                // Sets the target position for the motors
-//                wheels[i].setTargetPosition(newWheelTarget[i]);
-//
-//                // Tells the motor to drive until they reach the target position
-//                wheels[i].setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//            }
-//            // reset the timeout time and start motion.
-//            runtime.reset();
-//
-//            frontLeft.setPower(Math.abs(speed));
-//            backLeft.setPower(Math.abs(speed));
-//            backRight.setPower(Math.abs(speed));
-//            frontRight.setPower(Math.abs(speed));
-//
-//            // keep looping while we are still active, and there is time left, and both motors are running.
-//            // Note: We use (isBusy() && isBusy()) in the loop test, which means that when EITHER motor hits
-//            // its target position, the motion will stop.  This is "safer" in the event that the robot will
-//            // always end the motion as soon as possible.
-//            // However, if you require that BOTH motors have finished their moves before the robot continues
-//            // onto the next step, use (isBusy() || isBusy()) in the loop test.
-//            while (opModeIsActive() && (runtime.seconds() < timeoutS) && frontLeft.isBusy() && backLeft.isBusy() && backRight.isBusy() && frontRight.isBusy()) {
-//                telemetry.addData("Path1",  "Running to %7d :%7d :%7d :%7d", newWheelTarget[0],  newWheelTarget[1], newWheelTarget[2], newWheelTarget[3]);
-//                telemetry.addData("Path2",  "Running at %7d :%7d :%7d :%7d", frontLeft.getCurrentPosition(), frontRight.getCurrentPosition(), backRight.getCurrentPosition(), backLeft.getCurrentPosition());
-//                telemetry.update();
-//            }
-//
-//            for (DcMotor wheel : wheels){
-//                // Stops motors after motors have reached target position
-//                wheel.setPower(0);
-//
-//                // Resets encoders
-//                wheel.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//                wheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//            }
-//
-//            //  sleep(250);   // optional pause after each move
-//        }
-//    }
+    class SamplePipeline extends OpenCvPipeline {
+        boolean viewportPaused;
+        AutoCVTest2.Location location;
+        @Override
+        public Mat processFrame(Mat input) {
+            Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGB2HSV);
+//            https://alloyui.com/examples/color-picker/hsv.html
+            Scalar lowHSV = new Scalar(23, 50, 70);
+            Scalar highHSV = new Scalar(32, 255, 255);
+
+            Core.inRange(mat, lowHSV, highHSV, mat);
+
+            Mat left = mat.submat(LEFT_ROI);
+            Mat right = mat.submat(RIGHT_ROI);
+            Mat middle = mat.submat(MIDDLE_ROI);
+
+            double leftValue = Core.sumElems(left).val[0] / LEFT_ROI.area() / 255;
+            double rightValue = Core.sumElems(right).val[0] / RIGHT_ROI.area() / 255;
+            double middleValue = Core.sumElems(middle).val[0] / MIDDLE_ROI.area() / 255;
+
+            left.release();
+            right.release();
+            middle.release();
+
+            telemetry.addData("Left raw value", (int) Core.sumElems(left).val[0]);
+            telemetry.addData("Right raw value", (int) Core.sumElems(right).val[0]);
+            telemetry.addData("Left percentage", Math.round(leftValue * 100) + "%");
+            telemetry.addData("Right percentage", Math.round(rightValue * 100) + "%");
+            double rightPercentage = Math.round(rightValue * 100);
+            double leftPercentage = Math.round(leftValue * 100);
+            double middlePercentage = Math.round(middleValue * 100);
+            boolean stoneLeft = leftValue > PERCENT_COLOR_THRESHOLD;
+            boolean stoneRight = rightValue > PERCENT_COLOR_THRESHOLD;
+
+
+            if (rightPercentage > leftPercentage && rightPercentage > middlePercentage) {
+                location = Location.RIGHT;
+                duckLocation = Location.RIGHT;
+                telemetry.addData("Skystone Location", "right");
+            }
+            else if (leftPercentage > rightPercentage && leftPercentage > middlePercentage) {
+                location = Location.LEFT;
+                duckLocation = Location.LEFT;
+                telemetry.addData("Skystone Location", "left");
+            }
+            else {
+                location = Location.MIDDLE;
+                duckLocation = Location.MIDDLE;
+                telemetry.addData("Skystone Location", "center");
+            }
+            telemetry.update();
+
+            Imgproc.cvtColor(mat, mat, Imgproc.COLOR_GRAY2RGB);
+
+            Scalar colorStone = new Scalar(255, 0, 0);
+            Scalar colorSkystone = new Scalar(0, 255, 0);
+
+            Imgproc.rectangle(mat, LEFT_ROI, location == Location.LEFT? colorSkystone:colorStone);
+            Imgproc.rectangle(mat, RIGHT_ROI, location == Location.RIGHT? colorSkystone:colorStone);
+            Imgproc.rectangle(mat, MIDDLE_ROI, location == Location.MIDDLE? colorSkystone:colorStone);
+            return mat;
+        }
+
+        @Override
+        public void onViewportTapped(){
+
+            viewportPaused = !viewportPaused;
+
+            if(viewportPaused){
+                webcam.pauseViewport();
+            } else {
+                webcam.resumeViewport();
+            }
+        }
+
+    }
 }

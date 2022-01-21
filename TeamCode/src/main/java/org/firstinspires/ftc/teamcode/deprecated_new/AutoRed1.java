@@ -1,12 +1,16 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.deprecated_new;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 
-@Autonomous(name = "Blue Right(Carousel+sudo SU)")
-public class AutoBlue2 extends LinearOpMode {
+@Disabled
+@Autonomous(name = "Red Left(Carousel+Warehouse")
+public class AutoRed1 extends LinearOpMode {
     private final ElapsedTime runtime = new ElapsedTime();
 
     // Initializes drive motors to null
@@ -53,29 +57,56 @@ public class AutoBlue2 extends LinearOpMode {
             wheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             wheel.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         }
-
+        carouselMotorLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         telemetry.addData("Path0",  "Starting at %7d :%7d :%7d :%7d", frontLeft.getCurrentPosition(), frontRight.getCurrentPosition(), backLeft.getCurrentPosition(), backRight.getCurrentPosition());
         telemetry.update();
 
         waitForStart();
 
         moveForward(50, 0.1);
-        strafeRight(150, 0.7);
-        strafeRight(150, 0.3);
-        moveBackward(20, 0.1);
+        strafeLeft(200, 0.7);
+        strafeLeft(125, 0.3);
+        moveBackward(30, 0.1);
 
         frontLeft.setPower(-0.1);
         frontRight.setPower(-0.1);
         backLeft.setPower(-0.1);
         backRight.setPower(-0.1);
-        spinCarousel(4500, -1);
+        spinCarousel(4000, 1);
         frontLeft.setPower(0);
         frontRight.setPower(0);
         backLeft.setPower(0);
         backRight.setPower(0);
 
+        moveForward(30, 0.3);
+        strafeRight(150, 0.3);
+        pivotLeft(180, 0.3);
+        strafeRight(150, 0.2);
+        strafeLeft(10, 0.1);
+        moveForward(750, 0.1);
 
-        moveForward(120, 0.1);
+        //END
+
+
+        /*/
+        moveForward(17,1);
+        sleep(6500);
+        */
+//        strafeLeft(25,1);
+//        moveForward(10,1);
+//        strafeRight(12, 1);
+//        rotate(180);
+
+//        encoderDrive(DRIVE_SPEED,   -10,  10, 10, -10, 5.0);
+//        encoderDrive(DRIVE_SPEED,  8,  8, 8, 8, 5.0);
+//        encoderDrive(DRIVE_SPEED,  18,  -18, -18, 18, 5.0);
+//        encoderDrive(DRIVE_SPEED,  -6,  6, -6, 6, 5.0);
+//        encoderDrive(DRIVE_SPEED,  -5.5,  -5.5, -5.5, -5.5, 5.0);
+//        encoderDrive(DRIVE_SPEED,  12.8,  12.8, 12.8, 12.8, 5.0);
+//        encoderDrive(DRIVE_SPEED,  -6,  6, -6, 6, 5.0);
+//        encoderDrive(DRIVE_SPEED,  -9,  -9, -9, -9, 5.0);
+//        encoderDrive(TURN_SPEED,   12, -12, 12, -12, 4.0);  // S2: Turn Right 12 Inches with 4 Sec timeout
+//        encoderDrive(DRIVE_SPEED, -24, -24, -24, -24, 4.0);  // S3: Reverse 24 Inches with 4 Sec timeout
     }
 
     public void spinCarousel(int time, int power)

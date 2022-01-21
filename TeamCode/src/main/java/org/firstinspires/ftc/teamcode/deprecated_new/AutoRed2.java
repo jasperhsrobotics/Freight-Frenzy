@@ -1,13 +1,15 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.deprecated_new;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@Autonomous(name = "Red Left(Warehouse)")
-public class AutoRed3 extends LinearOpMode {
+@Disabled
+@Autonomous(name = "Red Left(Carousel+SU)")
+public class AutoRed2 extends LinearOpMode {
     private final ElapsedTime runtime = new ElapsedTime();
 
     // Initializes drive motors to null
@@ -60,8 +62,22 @@ public class AutoRed3 extends LinearOpMode {
 
         waitForStart();
 
-        moveForward(250, 0.1);
-        strafeLeft(240, 0.3);
+        moveForward(50, 0.1);
+        strafeLeft(200, 0.7);
+        strafeLeft(125, 0.3);
+        moveBackward(30  , 0.1);
+
+        frontLeft.setPower(-0.1);
+        frontRight.setPower(-0.1);
+        backLeft.setPower(-0.1);
+        backRight.setPower(-0.1);
+        spinCarousel(4000, 1);
+        frontLeft.setPower(0);
+        frontRight.setPower(0);
+        backLeft.setPower(0);
+        backRight.setPower(0);
+
+        moveForward(100, 0.1);
 
         //END
 

@@ -1,5 +1,6 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.deprecated_new;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -7,8 +8,9 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@TeleOp(name = "TeleOp")
-public class MainTeleOp extends OpMode {
+@Disabled
+@TeleOp(name = "TeleOp Test")
+public class MainTeleOp1 extends OpMode {
     private ElapsedTime runtime = new ElapsedTime();
 
     // Initializes drive motors to null
@@ -25,7 +27,7 @@ public class MainTeleOp extends OpMode {
     private boolean braking = false;
     private double speed;
     private boolean spedUp;
-    private boolean intakeOn;
+    private boolean intakeOn = true;
 
     /*
      * Code to run ONCE when the driver hits INIT
@@ -109,6 +111,9 @@ public class MainTeleOp extends OpMode {
         if (gamepad1.a) {
             intakeOn = false;
             intake.setPower(0);
+            carousel = false;
+            carouselLeft.setPower(0);
+            carouselRight.setPower(0);
         }
 
         // EMERGENCY STOP

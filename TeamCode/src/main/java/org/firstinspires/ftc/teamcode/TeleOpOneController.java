@@ -26,8 +26,9 @@ public class TeleOpOneController extends OpMode {
             robot.arm.setPower(0.7);
         } else if (gamepad1.dpad_down) {
             robot.arm.setDirection(DcMotorSimple.Direction.REVERSE);
-            robot.arm.setPower(0.1);
+            robot.arm.setPower(0.7);
         } else {
+            robot.arm.setDirection(DcMotorSimple.Direction.FORWARD);
             robot.arm.setPower(0.1);
         }
 

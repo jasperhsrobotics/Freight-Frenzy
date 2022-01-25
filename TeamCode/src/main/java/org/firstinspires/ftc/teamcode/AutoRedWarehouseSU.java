@@ -25,7 +25,7 @@ public class AutoRedWarehouseSU extends LinearOpMode {
         robot.moveTicks(30, 0.1, Direction.REVERSE);
 
         robot.setPower(-0.1);
-        robot.spinCarousel(4000, 1, Direction.FORWARD);
+        robot.spinCarouselTime(4000, 1, Direction.FORWARD);
         robot.setPower(0);
 
         robot.moveTicks(120, 0.1, Direction.FORWARD);

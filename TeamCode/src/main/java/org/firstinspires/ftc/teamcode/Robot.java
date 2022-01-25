@@ -110,8 +110,13 @@ public class Robot {
         this.arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
-    public void strafeLeft(double ticks, double speed) {
-        int target = (int)(Math.round(ticks));
+    protected void strafeLeftTicks(int ticks, double speed) {
+        int target = ticks;
+
+        this.frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        this.frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        this.backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        this.backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         this.frontLeft.setTargetPosition(this.frontLeft.getCurrentPosition() - target);
         this.frontRight.setTargetPosition(this.frontRight.getCurrentPosition() + target);
@@ -123,37 +128,38 @@ public class Robot {
         this.backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         this.backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        //        runtime.reset();
-
-        this.frontLeft.setPower(speed);
-        this.backLeft.setPower(speed);
-        this.backRight.setPower(speed);
-        this.frontRight.setPower(speed);
+        frontLeft.setPower(speed);
+        frontRight.setPower(speed);
+        backLeft.setPower(speed);
+        frontRight.setPower(speed);
 
         while (frontLeft.isBusy() && backLeft.isBusy() && backRight.isBusy() && frontRight.isBusy()) {
-//            telemetry.addData("Path1",  "Running to %7d :%7d :%7d :%7d", newWheelTarget[0],  newWheelTarget[1], newWheelTarget[2], newWheelTarget[3]);
-            telemetry.addData("Path2",  "Running at %7d :%7d :%7d :%7d", frontLeft.getCurrentPosition(), frontRight.getCurrentPosition(), backRight.getCurrentPosition(), backLeft.getCurrentPosition());
-            telemetry.update();
-        }
-        // Stops motors after motors have reached target position
-        frontLeft.setPower(0);
-        frontRight.setPower(0);
-        backLeft.setPower(0);
-        backRight.setPower(0);
 
-        // Resets encoders
-        frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        }
+
+        this.frontLeft.setPower(0);
+        this.frontRight.setPower(0);
+        this.backLeft.setPower(0);
+        this.backRight.setPower(0);
+
+        this.frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        this.frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        this.backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        this.backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        this.frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        this.frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        this.backLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        this.backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
-    public void strafeRight(double ticks, double speed) {
-        int target = (int)(Math.round(ticks));
+    protected void strafeRightTicks(int ticks, double speed) {
+        int target = ticks;
+
+        this.frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        this.frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        this.backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        this.backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         this.frontLeft.setTargetPosition(this.frontLeft.getCurrentPosition() + target);
         this.frontRight.setTargetPosition(this.frontRight.getCurrentPosition() - target);
@@ -165,32 +171,29 @@ public class Robot {
         this.backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         this.backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        //        runtime.reset();
-
-        this.frontLeft.setPower(speed);
-        this.backLeft.setPower(speed);
-        this.backRight.setPower(speed);
-        this.frontRight.setPower(speed);
+        frontLeft.setPower(speed);
+        frontRight.setPower(speed);
+        backLeft.setPower(speed);
+        frontRight.setPower(speed);
 
         while (frontLeft.isBusy() && backLeft.isBusy() && backRight.isBusy() && frontRight.isBusy()) {
-            telemetry.addData("Path2",  "Running at %7d :%7d :%7d :%7d", frontLeft.getCurrentPosition(), frontRight.getCurrentPosition(), backRight.getCurrentPosition(), backLeft.getCurrentPosition());
-            telemetry.update();
-        }
-        // Stops motors after motors have reached target position
-        frontLeft.setPower(0);
-        frontRight.setPower(0);
-        backLeft.setPower(0);
-        backRight.setPower(0);
 
-        // Resets encoders
-        frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        }
+
+        this.frontLeft.setPower(0);
+        this.frontRight.setPower(0);
+        this.backLeft.setPower(0);
+        this.backRight.setPower(0);
+
+        this.frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        this.frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        this.backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        this.backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        this.frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        this.frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        this.backLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        this.backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
     public int moveTicks(int ticks, double speed, Direction dir) {
@@ -213,16 +216,12 @@ public class Robot {
             backRightTarget = -target;
         }
         else if (dir == Direction.RIGHT) {
-            frontLeftTarget = target;
-            frontRightTarget = -target;
-            backLeftTarget = -target;
-            backRightTarget = target;
+            strafeRightTicks(target, speed);
+            return 0;
         }
         else if (dir == Direction.LEFT) {
-            frontLeftTarget = -target;
-            frontRightTarget = target;
-            backLeftTarget = target;
-            backRightTarget = -target;
+            strafeLeftTicks(target, speed);
+            return 0;
         }
         else if (dir == Direction.PIVOT_LEFT) {
             frontLeftTarget = -target;
@@ -285,13 +284,17 @@ public class Robot {
 
     public void moveTime(int mills, double power, Direction dir) {
         if (dir == Direction.FORWARD)
-            moveForward(mills, power);
+            moveForwardTime(mills, power);
         else if (dir == Direction.REVERSE)
-            moveBackward(mills, power);
+            moveBackwardTime(mills, power);
         else if (dir == Direction.PIVOT_LEFT)
-            pivotLeft(mills, power);
+            pivotLeftTime(mills, power);
         else if (dir == Direction.PIVOT_RIGHT)
-            pivotRight(mills, power);
+            pivotRightTime(mills, power);
+        else if (dir == Direction.LEFT)
+            strafeLeftTime(mills, power);
+        else if (dir == Direction.RIGHT)
+            strafeRightTime(mills, power);
     }
 
     public void setPower(double power) {
@@ -309,19 +312,37 @@ public class Robot {
         }
     }
 
-    public void moveForward(int mills, double power) {
+    public void moveForwardTime(int mills, double power) {
         setPower(power);
         sleep(mills);
         setPower(0);
     }
 
-    public void moveBackward(int mills, double power) {
+    public void moveBackwardTime(int mills, double power) {
         setPower(-power);
         sleep(mills);
         setPower(0);
     }
 
-    public void pivotRight(int mills, double power) {
+    public void strafeLeftTime(int mills, double power) {
+        this.backRight.setPower(power);
+        this.frontRight.setPower(-power);
+        this.backLeft.setPower(-power);
+        this.frontLeft.setPower(power);
+        sleep(mills);
+        setPower(0);
+    }
+
+    public void strafeRightTime(int mills, double power) {
+        this.backRight.setPower(-power);
+        this.frontRight.setPower(power);
+        this.backLeft.setPower(power);
+        this.frontLeft.setPower(-power);
+        sleep(mills);
+        setPower(0);
+    }
+
+    public void pivotRightTime(int mills, double power) {
         this.backRight.setPower(-power);
         this.frontRight.setPower(-power);
         this.backLeft.setPower(power);
@@ -330,7 +351,7 @@ public class Robot {
         setPower(0);
     }
 
-    public void pivotLeft(int mills, double power) {
+    public void pivotLeftTime(int mills, double power) {
         this.backRight.setPower(-power);
         this.frontRight.setPower(-power);
         this.backLeft.setPower(power);
@@ -339,7 +360,7 @@ public class Robot {
         setPower(0);
     }
 
-    public int spinCarousel(int time, int power, Direction dir) {
+    public int spinCarouselTime(int time, int power, Direction dir) {
         if (dir == Direction.REVERSE) {
             power = -power;
         }

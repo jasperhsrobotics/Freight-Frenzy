@@ -23,6 +23,7 @@ public class Robot {
 
     public DcMotor arm = null;
     public DcMotor intake = null;
+    protected DcMotor[] wheels = new DcMotor[4];
     ElapsedTime time = new ElapsedTime();
 
     public void initializeBot(HardwareMap hardwareMap, ElapsedTime time) {
@@ -55,6 +56,12 @@ public class Robot {
         this.frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         this.backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         this.backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+
+        wheels[0] = frontLeft;
+        wheels[1] = frontRight;
+        wheels[2] = backLeft;
+        wheels[3] = backRight;
     }
 
     public void stopAll() {
@@ -110,90 +117,76 @@ public class Robot {
         this.arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
-    protected void strafeLeftTicks(int ticks, double speed) {
-        int target = ticks;
+    public void strafeLeftTicks(double ticks, double speed) {
+        int target = (int)(Math.round(ticks));
 
-        this.frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        this.frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        this.backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        this.backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        wheels[0].setTargetPosition(wheels[0].getCurrentPosition() - target);
+        wheels[1].setTargetPosition(wheels[1].getCurrentPosition() + target);
+        wheels[2].setTargetPosition(wheels[2].getCurrentPosition() + target);
+        wheels[3].setTargetPosition(wheels[3].getCurrentPosition() - target);
 
-        this.frontLeft.setTargetPosition(this.frontLeft.getCurrentPosition() - target);
-        this.frontRight.setTargetPosition(this.frontRight.getCurrentPosition() + target);
-        this.backLeft.setTargetPosition(this.backLeft.getCurrentPosition() + target);
-        this.backRight.setTargetPosition(this.backRight.getCurrentPosition() - target);
+        for (int i = 0; i < 4; i++) {
+            // Sets the target position for the motors
+//            wheels[i].setTargetPosition(wheels[i].getCurrentPosition() - target);
 
-        this.frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        this.frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        this.backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        this.backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            // Tells the motor to drive until they reach the target position
+            wheels[i].setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        }
+//        runtime.reset();
 
         frontLeft.setPower(speed);
-        frontRight.setPower(speed);
         backLeft.setPower(speed);
+        backRight.setPower(speed);
         frontRight.setPower(speed);
 
         while (frontLeft.isBusy() && backLeft.isBusy() && backRight.isBusy() && frontRight.isBusy()) {
 
         }
 
-        this.frontLeft.setPower(0);
-        this.frontRight.setPower(0);
-        this.backLeft.setPower(0);
-        this.backRight.setPower(0);
+        for (DcMotor wheel : wheels){
+            // Stops motors after motors have reached target position
+            wheel.setPower(0);
 
-        this.frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        this.frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        this.backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        this.backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        this.frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        this.frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        this.backLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        this.backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            // Resets encoders
+            wheel.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            wheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        }
     }
 
-    protected void strafeRightTicks(int ticks, double speed) {
-        int target = ticks;
+    public void strafeRightTicks(double ticks, double speed) {
+        int target = (int)(Math.round(ticks));
 
-        this.frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        this.frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        this.backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        this.backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        wheels[0].setTargetPosition(wheels[0].getCurrentPosition() + target);
+        wheels[1].setTargetPosition(wheels[1].getCurrentPosition() - target);
+        wheels[2].setTargetPosition(wheels[2].getCurrentPosition() - target);
+        wheels[3].setTargetPosition(wheels[3].getCurrentPosition() + target);
 
-        this.frontLeft.setTargetPosition(this.frontLeft.getCurrentPosition() + target);
-        this.frontRight.setTargetPosition(this.frontRight.getCurrentPosition() - target);
-        this.backLeft.setTargetPosition(this.backLeft.getCurrentPosition() - target);
-        this.backRight.setTargetPosition(this.backRight.getCurrentPosition() + target);
+        for (int i = 0; i < 4; i++) {
+            // Sets the target position for the motors
+//            wheels[i].setTargetPosition(wheels[i].getCurrentPosition() - target);
 
-        this.frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        this.frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        this.backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        this.backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            // Tells the motor to drive until they reach the target position
+            wheels[i].setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        }
+//        runtime.reset();
 
         frontLeft.setPower(speed);
-        frontRight.setPower(speed);
         backLeft.setPower(speed);
+        backRight.setPower(speed);
         frontRight.setPower(speed);
 
         while (frontLeft.isBusy() && backLeft.isBusy() && backRight.isBusy() && frontRight.isBusy()) {
 
         }
 
-        this.frontLeft.setPower(0);
-        this.frontRight.setPower(0);
-        this.backLeft.setPower(0);
-        this.backRight.setPower(0);
+        for (DcMotor wheel : wheels){
+            // Stops motors after motors have reached target position
+            wheel.setPower(0);
 
-        this.frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        this.frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        this.backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        this.backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        this.frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        this.frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        this.backLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        this.backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            // Resets encoders
+            wheel.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            wheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        }
     }
 
     public int moveTicks(int ticks, double speed, Direction dir) {
@@ -325,19 +318,19 @@ public class Robot {
     }
 
     public void strafeLeftTime(int mills, double power) {
-        this.backRight.setPower(power);
-        this.frontRight.setPower(-power);
-        this.backLeft.setPower(-power);
-        this.frontLeft.setPower(power);
+        this.backRight.setPower(-power);
+        this.frontRight.setPower(power);
+        this.backLeft.setPower(power);
+        this.frontLeft.setPower(-power);
         sleep(mills);
         setPower(0);
     }
 
     public void strafeRightTime(int mills, double power) {
-        this.backRight.setPower(-power);
-        this.frontRight.setPower(power);
-        this.backLeft.setPower(power);
-        this.frontLeft.setPower(-power);
+        this.backRight.setPower(power);
+        this.frontRight.setPower(-power);
+        this.backLeft.setPower(-power);
+        this.frontLeft.setPower(power);
         sleep(mills);
         setPower(0);
     }

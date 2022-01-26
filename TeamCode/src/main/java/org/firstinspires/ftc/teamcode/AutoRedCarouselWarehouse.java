@@ -19,19 +19,19 @@ public class AutoRedCarouselWarehouse extends LinearOpMode {
 
         waitForStart();
         robot.moveTicks(50, 0.1, Direction.FORWARD);
-        robot.moveTicks(200, 0.7, Direction.LEFT);
+        robot.strafeLeftTicks(200, 0.7);
         robot.strafeLeftTicks(125, 0.3);
         robot.moveTicks(30, 0.1, Direction.REVERSE);
 
-        robot.setPower(-0.1);
-        robot.spinCarouselTime(4000, 1, Direction.FORWARD);
+        robot.setPower(-0.2);
+        robot.spinCarouselTime(5000, 1, Direction.FORWARD);
         robot.setPower(0);
 
         robot.moveTicks(30, 0.3, Direction.FORWARD);
-        robot.moveTicks(150, 0.3, Direction.RIGHT);
+        robot.strafeRightTicks(150, 0.3);
         robot.moveTicks(180, 0.3, Direction.PIVOT_RIGHT);
-        robot.moveTime(5000, 0.3, Direction.RIGHT);
-        robot.moveTicks(10, 0.1, Direction.LEFT);
+        robot.strafeRightTime(3000, 0.7);
+        robot.strafeLeftTicks(10, 0.1);
         robot.moveTicks(750, 0.1, Direction.FORWARD);
 
 //        moveTicks(400, 0.5, Direction.FORWARD);
